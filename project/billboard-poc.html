@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="capital">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WHATS/NEXT · Billboard POC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;800;900&family=Press+Start+2P&family=Space+Mono:wght@400;700&family=Cormorant:ital,wght@1,600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --black:#04040a;--paper:#ece7da;--muted:#8a8880;--muted2:#5a5652;
+  --gold:#c8a24b;--gold-hi:#f3dd9b;--gold-lo:#7a5a22;
+  --teal:#1f9c89;--teal-hi:#46cdb6;
+  --signal:#b9f23a;--lime:#d4ff4a;
+  --line:rgba(255,255,255,.09);
+  /* mode vars */
+  --acc:#c8a24b;--acc-hi:#f3dd9b;--acc-glow:rgba(200,162,75,.5);
+  --frame-bg:rgba(10,9,7,.92);
+}
+[data-mode="operator"]{
+  --acc:#b9f23a;--acc-hi:#d4ff4a;--acc-glow:rgba(185,242,58,.55);
+  --frame-bg:rgba(4,8,4,.94);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--black);color:var(--paper);font-family:'Archivo',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+
+/* ── ATMOSPHERE ── */
+.grain{position:fixed;inset:-50%;z-index:90;pointer-events:none;opacity:.42;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  animation:grn 1.1s steps(3) infinite}
+@keyframes grn{0%{transform:translate(0,0)}33%{transform:translate(-3%,2%)}66%{transform:translate(2%,-3%)}100%{transform:translate(0,0)}}
+.vignette{position:fixed;inset:0;z-index:89;pointer-events:none;box-shadow:inset 0 0 22vmin 8vmin rgba(0,0,0,.72)}
+
+/* Operator ambient — subtle dot grid on whole bg */
+[data-mode="operator"] body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(circle,rgba(185,242,58,.06) 1px,transparent 1px);
+  background-size:22px 22px;animation:gridpulse 8s ease-in-out infinite}
+@keyframes gridpulse{0%,100%{opacity:.6}50%{opacity:1}}
+
+/* ── LAYOUT ── */
+.page{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:20px}
+
+/* ── MODE TOGGLE ── */
+.toggle-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+.wordmark{font-weight:800;letter-spacing:.06em;font-size:16px;color:var(--paper)}
+.wordmark .sl{color:var(--acc);transition:color .5s}
+.mode-toggle{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:rgba(0,0,0,.5)}
+.mode-toggle button{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  background:transparent;color:var(--muted);border:0;padding:9px 20px;cursor:pointer;transition:.3s}
+.mode-toggle button[data-on="1"]{color:var(--black);background:var(--acc);transition:background .5s}
+
+/* ── BILLBOARD WRAP ── */
+.bb-wrap{position:relative;width:min(620px,92vw)}
+
+/* ── CAPITAL FRAME ── */
+[data-mode="capital"] .bb-frame{
+  position:relative;border-radius:8px;background:var(--frame-bg);
+  border:1px solid rgba(200,162,75,.28);
+  padding:32px 30px 28px;overflow:hidden;
+  box-shadow:0 24px 64px rgba(0,0,0,.62), inset 0 0 0 1px rgba(255,255,255,.04), 0 0 60px rgba(200,162,75,.06)}
+/* Gold L-corner marks */
+[data-mode="capital"] .bbc{position:absolute;width:14px;height:14px;border-color:var(--gold);border-style:solid;opacity:.7}
+[data-mode="capital"] .bbc.tl{top:9px;left:9px;border-width:2px 0 0 2px}
+[data-mode="capital"] .bbc.tr{top:9px;right:9px;border-width:2px 2px 0 0}
+[data-mode="capital"] .bbc.bl{bottom:9px;left:9px;border-width:0 0 2px 2px}
+[data-mode="capital"] .bbc.br{bottom:9px;right:9px;border-width:0 2px 2px 0}
+
+/* ── OPERATOR FRAME ── */
+[data-mode="operator"] .bb-frame{
+  position:relative;background:var(--frame-bg);padding:32px 30px 28px;overflow:hidden;
+  clip-path:polygon(18px 0%,calc(100% - 18px) 0%,100% 18px,100% calc(100% - 18px),calc(100% - 18px) 100%,18px 100%,0% calc(100% - 18px),0% 18px);
+  box-shadow:0 24px 64px rgba(0,0,0,.7), 0 0 80px rgba(185,242,58,.06)}
+/* Circuit trace SVG border */
+[data-mode="operator"] .bb-circuit{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+
+/* Operator scanlines on frame bg */
+[data-mode="operator"] .bb-frame::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px);
+  z-index:2}
+/* Operator dot-matrix on frame bg */
+[data-mode="operator"] .bb-frame::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(circle,rgba(185,242,58,.05) 1px,transparent 1px);
+  background-size:8px 8px;z-index:1}
+
+/* ── CORNER HUD (operator only) ── */
+.bb-hud-corners{position:absolute;inset:0;pointer-events:none;z-index:5}
+[data-mode="capital"] .bb-hud-corners{display:none}
+.hud-tl,.hud-tr,.hud-bl,.hud-br{position:absolute;font-family:'Press Start 2P',monospace;font-size:7px;letter-spacing:.06em;line-height:1.6;color:rgba(185,242,58,.45)}
+.hud-tl{top:14px;left:16px}
+.hud-tr{top:14px;right:16px;text-align:right}
+.hud-bl{bottom:14px;left:16px}
+.hud-br{bottom:14px;right:16px;text-align:right}
+
+/* ── LABEL TAG ── */
+.bb-lbl{min-height:18px;margin-bottom:8px;display:flex;align-items:center;gap:8px;position:relative;z-index:6}
+/* Capital label */
+[data-mode="capital"] .bb-lbl{font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(200,162,75,.8)}
+[data-mode="capital"] .bb-lbl::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px rgba(200,162,75,.7);animation:lp 2s infinite;flex:none}
+/* Operator label */
+[data-mode="operator"] .bb-lbl{font-family:'Press Start 2P',monospace;font-size:8px;letter-spacing:.04em;color:var(--signal);text-transform:uppercase}
+[data-mode="operator"] .bb-lbl::before{content:"▶";font-size:7px;color:var(--signal);flex:none;margin-right:2px}
+@keyframes lp{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── BIG NUMBER ── */
+.bb-display{position:relative;z-index:6;transform-origin:50% 30%}
+/* Capital number */
+[data-mode="capital"] .bb-val{
+  font-family:'Archivo',system-ui;font-weight:900;line-height:.82;letter-spacing:-.055em;
+  font-size:clamp(64px,12vw,124px);
+  color:var(--gold-hi);
+  text-shadow:0 5px 0 rgba(0,0,0,.5), 0 0 80px rgba(200,162,75,.5), 0 0 140px rgba(200,162,75,.22)}
+/* Operator number */
+[data-mode="operator"] .bb-val{
+  font-family:'Space Mono',monospace;font-weight:700;line-height:.82;letter-spacing:-.02em;
+  font-size:clamp(56px,10vw,110px);
+  color:var(--signal);
+  text-shadow:
+    0 0 30px var(--signal),
+    0 0 60px rgba(185,242,58,.45),
+    0 0 100px rgba(185,242,58,.2),
+    4px 0 0 rgba(255,30,100,.45),
+    -4px 0 0 rgba(30,160,255,.45);
+  animation:opflicker 8s ease-in-out infinite}
+@keyframes opflicker{0%,95%,100%{opacity:1}96%{opacity:.88}97%{opacity:1}98%{opacity:.92}99%{opacity:1}}
+/* Glitch on entry */
+.bb-val.glitching{animation:glitch .5s ease forwards}
+@keyframes glitch{
+  0%{transform:none;filter:none}
+  10%{transform:translateX(-3px) skewX(2deg);filter:hue-rotate(40deg)}
+  20%{transform:translateX(3px) skewX(-2deg);filter:hue-rotate(-20deg)}
+  30%{transform:translateX(-2px);filter:none}
+  40%{transform:none}
+  100%{transform:none;filter:none}
+}
+
+.bb-desc{font-size:14px;line-height:1.5;color:var(--muted);margin-top:14px;max-width:32ch;position:relative;z-index:6}
+[data-mode="operator"] .bb-desc{font-family:'Space Mono',monospace;font-size:11.5px;color:rgba(185,242,58,.55);letter-spacing:.02em}
+
+/* ── PROGRESS BAR ── */
+.bb-prog{position:absolute;bottom:0;left:0;height:2px;width:0;z-index:7;transition:background .5s}
+[data-mode="capital"] .bb-prog{background:linear-gradient(90deg,var(--gold-lo),var(--gold-hi))}
+[data-mode="operator"] .bb-prog{background:linear-gradient(90deg,var(--teal),var(--signal))}
+.bb-prog.ticking{animation:prog var(--dur,10s) linear forwards}
+@keyframes prog{from{width:0}to{width:100%}}
+
+/* ── SCAN LINE (capital) ── */
+.bb-scan{position:absolute;left:0;right:0;height:1px;top:-1px;z-index:8;pointer-events:none;opacity:0;transition:background .5s}
+[data-mode="capital"] .bb-scan{background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+[data-mode="operator"] .bb-scan{background:linear-gradient(90deg,transparent,var(--signal),transparent)}
+.bb-scan.run{animation:scan .45s ease forwards}
+@keyframes scan{0%{top:-1px;opacity:.9}100%{top:calc(100% + 1px);opacity:0}}
+
+/* ── QUEUE TILES ── */
+.bb-queue{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:0}
+/* Capital tile */
+[data-mode="capital"] .tile{cursor:pointer;border:1px solid var(--line);border-radius:7px;padding:10px 12px;
+  background:rgba(255,255,255,.02);transition:.22s;text-align:left;font-family:inherit}
+[data-mode="capital"] .tile:hover{border-color:rgba(200,162,75,.4);background:rgba(255,255,255,.04)}
+[data-mode="capital"] .tile.active{border-color:var(--gold);background:rgba(200,162,75,.06)}
+[data-mode="capital"] .tv{font-weight:800;font-size:17px;letter-spacing:-.02em;color:var(--paper);line-height:1}
+[data-mode="capital"] .tl{font-size:10px;color:var(--muted);margin-top:4px;font-family:'Space Mono',monospace;letter-spacing:.04em}
+/* Operator tile */
+[data-mode="operator"] .tile{cursor:pointer;border:1px solid rgba(185,242,58,.18);border-radius:0;padding:10px 12px;
+  background:rgba(4,10,4,.8);transition:.22s;text-align:left;font-family:inherit;
+  clip-path:polygon(8px 0%,100% 0%,100% calc(100% - 8px),calc(100% - 8px) 100%,0% 100%,0% 8px)}
+[data-mode="operator"] .tile:hover{border-color:var(--signal);background:rgba(185,242,58,.06)}
+[data-mode="operator"] .tile.active{border-color:var(--signal);background:rgba(185,242,58,.08);
+  box-shadow:inset 0 0 0 1px rgba(185,242,58,.25)}
+[data-mode="operator"] .tv{font-family:'Press Start 2P',monospace;font-size:12px;color:var(--signal);line-height:1.3;
+  text-shadow:0 0 12px var(--signal)}
+[data-mode="operator"] .tl{font-family:'Press Start 2P',monospace;font-size:7px;color:rgba(185,242,58,.5);margin-top:5px;letter-spacing:.04em;line-height:1.5}
+
+/* ── STATUS BAR (POC label) ── */
+.status-bar{display:flex;align-items:center;gap:16px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2)}
+.status-bar .live{width:5px;height:5px;border-radius:50%;background:var(--acc);box-shadow:0 0 6px var(--acc-glow);animation:lp 1.8s infinite;transition:background .5s,box-shadow .5s}
+
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <!-- header -->
+  <div class="toggle-wrap">
+    <div class="wordmark">WHATS<span class="sl">/</span>NEXT</div>
+    <div class="mode-toggle" id="toggle">
+      <button data-set="capital" data-on="1">&#9670; Capital</button>
+      <button data-set="operator">&#9632; Operator</button>
+    </div>
+  </div>
+
+  <!-- billboard -->
+  <div class="bb-wrap">
+    <div class="bb-frame" id="bbFrame">
+      <!-- circuit SVG (operator only, drawn via JS) -->
+      <svg class="bb-circuit" id="bbCircuit" viewBox="0 0 620 300" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible"></svg>
+
+      <!-- corner HUD (operator) -->
+      <div class="bb-hud-corners">
+        <div class="hud-tl">BASE LVL<br>STAT_A :: <span id="hudTL">$1.5B</span></div>
+        <div class="hud-tr">TIMESTAMP<br><span id="hudTR">00:00:00</span></div>
+      </div>
+
+      <span class="bbc tl"></span><span class="bbc tr"></span>
+      <span class="bbc bl"></span><span class="bbc br"></span>
+      <div class="bb-scan" id="bbScan"></div>
+
+      <div class="bb-lbl" id="bbLbl">The Exit</div>
+      <div class="bb-display" id="bbDisplay">
+        <div class="bb-val" id="bbVal">$1.5B</div>
+        <div class="bb-desc" id="bbDesc">WMS Gaming → Scientific Games. Co-stewarded by our team.</div>
+      </div>
+      <div class="bb-prog" id="bbProg"></div>
+    </div>
+    <div style="height:10px"></div>
+    <div class="bb-queue" id="bbQueue"></div>
+  </div>
+
+  <div class="status-bar">
+    <span class="live"></span>
+    <span id="statusTxt">billboard poc · capital mode · click tiles · auto-cycles 10s</span>
+  </div>
+</div>
+
+<div class="grain"></div>
+<div class="vignette"></div>
+
+<!-- Hidden SVG filters for glitch -->
+<svg style="position:absolute;width:0;height:0"><defs>
+  <filter id="glitch"><feTurbulence type="turbulence" baseFrequency="0.05 0.8" numOctaves="1" result="noise" seed="2">
+    <animate attributeName="seed" values="2;6;3;8;1;5" dur="0.4s" repeatCount="indefinite"/></feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G"/></filter>
+</defs></svg>
+
+<script>
+const root = document.documentElement;
+let mode = 'capital';
+
+const STATS = [
+  {val:'$1.5B', num:1.5, pre:'$', suf:'B', dec:1, lbl:'Exit on Record', desc:'WMS Gaming → Scientific Games. Co-stewarded by our team.'},
+  {val:'20YRS', num:20, pre:'', suf:'YRS', dec:0, lbl:'Time in Domain', desc:'Games, marketing & platforms — console, mobile, social, live.'},
+  {val:'$340M', num:340, pre:'$', suf:'M', dec:0, lbl:'R&D Directed', desc:'Annual R&D portfolios across multi-billion-dollar businesses.'},
+  {val:'7+', num:7, pre:'', suf:'+', dec:0, lbl:'Portfolio Active', desc:'Companies in games, AI, AR & creator infrastructure.'}
+];
+let idx=0, cycleTimer, CYCLE_DUR=10000, transitioning=false;
+let _da1=null,_da2=null;
+function cancelDisp(){
+  if(_da1){_da1.cancel();_da1=null;}
+  if(_da2){_da2.cancel();_da2=null;}
+  const d=document.getElementById('bbDisplay');
+  if(d){d.style.transform='';d.style.opacity='';d.style.filter='';}
+}
+
+/* ── CIRCUIT SVG (operator mode) ── */
+function drawCircuit(show){
+  const svg = document.getElementById('bbCircuit');
+  svg.innerHTML = '';
+  if(!show) return;
+  const W=620, H=300, cut=20, col='#b9f23a', dim='rgba(185,242,58,.35)';
+  // main chamfered border
+  const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+  const pts = `${cut},0 ${W-cut},0 ${W},${cut} ${W},${H-cut} ${W-cut},${H} ${cut},${H} 0,${H-cut} 0,${cut}`;
+  poly.setAttribute('points',pts);
+  poly.setAttribute('fill','none');
+  poly.setAttribute('stroke',col);
+  poly.setAttribute('stroke-width','1.5');
+  const perim = 2*(W+H);
+  poly.setAttribute('stroke-dasharray', perim);
+  poly.setAttribute('stroke-dashoffset', perim);
+  svg.appendChild(poly);
+  // animate draw-in
+  poly.animate([{strokeDashoffset:perim},{strokeDashoffset:0}],{duration:900,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
+
+  // corner accent nodes
+  [[cut,0],[W-cut,0],[W,cut],[W,H-cut],[W-cut,H],[cut,H],[0,H-cut],[0,cut]].forEach(([x,y])=>{
+    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',x); c.setAttribute('cy',y); c.setAttribute('r','3');
+    c.setAttribute('fill',col); c.setAttribute('opacity','0');
+    svg.appendChild(c);
+    c.animate([{opacity:0},{opacity:.8}],{duration:300,delay:800,fill:'forwards'});
+  });
+
+  // horizontal circuit traces running off edges
+  const traces = [
+    {x1:0,y1:70,x2:-28,y2:70},{x1:0,y1:80,x2:-18,y2:80},
+    {x1:W,y1:70,x2:W+28,y2:70},{x1:W,y1:80,x2:W+18,y2:80},
+    {x1:0,y1:H-70,x2:-28,y2:H-70},{x1:W,y1:H-70,x2:W+28,y2:H-70},
+  ];
+  traces.forEach(({x1,y1,x2,y2})=>{
+    const l = document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',x1);l.setAttribute('y1',y1);l.setAttribute('x2',x2);l.setAttribute('y2',y2);
+    l.setAttribute('stroke',dim);l.setAttribute('stroke-width','1');l.setAttribute('opacity','0');
+    svg.appendChild(l);
+    l.animate([{opacity:0},{opacity:1}],{duration:400,delay:600,fill:'forwards'});
+  });
+
+  // inner secondary line (inset 6px)
+  const inner = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+  const i=8;
+  inner.setAttribute('points',`${cut+i},${i} ${W-cut-i},${i} ${W-i},${cut+i} ${W-i},${H-cut-i} ${W-cut-i},${H-i} ${cut+i},${H-i} ${i},${H-cut-i} ${i},${cut+i}`);
+  inner.setAttribute('fill','none');inner.setAttribute('stroke',dim);inner.setAttribute('stroke-width','.8');inner.setAttribute('opacity','0');
+  svg.appendChild(inner);
+  inner.animate([{opacity:0},{opacity:1}],{duration:500,delay:700,fill:'forwards'});
+}
+
+/* ── CHARACTER SCRAMBLE (operator transition) ── */
+const CHARS='0123456789ABCDEFXYZ!?#@$%±∞►■';
+function scrambleTo(el, finalText, dur=650, onDone){
+  clearInterval(el._st);
+  const steps=Math.ceil(dur/40);
+  let step=0;
+  el._st=setInterval(()=>{
+    const p=step/steps;
+    let out='';
+    for(let i=0;i<finalText.length;i++){
+      const cp=(p-(i/(finalText.length+1))*0.6)/0.6;
+      if(/[ .$+]/.test(finalText[i])) out+=finalText[i];
+      else if(cp>=1) out+=finalText[i];
+      else out+=CHARS[Math.floor(Math.random()*CHARS.length)];
+    }
+    el.textContent=out;
+    step++;
+    if(step>=steps){clearInterval(el._st);el.textContent=finalText;if(onDone)onDone();}
+  },40);
+}
+
+/* ── COUNT UP ── */
+function countUp(el, stat, onDone){
+  const {num,pre,suf,dec}=stat;
+  const t0=performance.now(), dur=1200;
+  (function tick(now){
+    const t=Math.min((now-t0)/dur,1), e=1-Math.pow(1-t,3), v=num*e;
+    el.textContent=pre+(dec>0?v.toFixed(dec):Math.round(v))+suf;
+    if(t<1) requestAnimationFrame(tick);
+    else{ el.textContent=stat.val; if(onDone)onDone(); }
+  })(t0);
+}
+
+/* ── HUD CLOCK ── */
+let hudSec=0;
+setInterval(()=>{
+  hudSec++;
+  const h=String(Math.floor(hudSec/3600)).padStart(2,'0');
+  const m=String(Math.floor((hudSec%3600)/60)).padStart(2,'0');
+  const s=String(hudSec%60).padStart(2,'0');
+  const el=document.getElementById('hudTR');
+  if(el) el.textContent=`${h}:${m}:${s}`;
+},1000);
+
+/* ── SHOW STAT ── */
+function showStat(newIdx, animate){
+  if(transitioning && animate) return;
+  idx=newIdx;
+  const stat=STATS[idx];
+  const display=document.getElementById('bbDisplay');
+  const valEl=document.getElementById('bbVal');
+  const descEl=document.getElementById('bbDesc');
+  const lblEl=document.getElementById('bbLbl');
+  const scanEl=document.getElementById('bbScan');
+  const hudTL=document.getElementById('hudTL');
+  if(hudTL) hudTL.textContent=stat.val;
+  renderQueue();
+
+  if(!animate){
+    cancelDisp(); transitioning=false;
+    valEl.textContent=stat.val;
+    descEl.textContent=stat.desc;
+    lblEl.textContent=stat.lbl;
+    setTimeout(()=>{ if(mode==='operator') scrambleTo(valEl,stat.val,600); else countUp(valEl,stat); },100);
+    startProg();
+    return;
+  }
+
+  // scan sweep
+  scanEl.classList.remove('run'); void scanEl.offsetWidth; scanEl.classList.add('run');
+
+  if(mode==='capital'){
+    // ── CAPITAL: perspective fall/rise ──
+    cancelDisp(); transitioning=true;
+    _da1=display.animate([
+      {transform:'perspective(500px) rotateX(0deg) translateY(0)',opacity:1},
+      {transform:'perspective(500px) rotateX(26deg) translateY(38px)',opacity:0}
+    ],{duration:360,easing:'cubic-bezier(.6,0,1,.6)',fill:'forwards'});
+    setTimeout(()=>{
+      lblEl.textContent=stat.lbl;
+      valEl.textContent='—';
+      descEl.textContent=stat.desc;
+      cancelDisp();
+      _da2 = display.animate([
+        {transform:'perspective(500px) rotateX(-24deg) translateY(-34px)',opacity:0},
+        {transform:'perspective(500px) rotateX(0deg) translateY(0)',opacity:1}
+      ],{duration:420,easing:'cubic-bezier(0,.6,.3,1)',fill:'forwards'});
+      _da2.onfinish=()=>{
+        display.style.transform=''; display.style.opacity='';
+        transitioning=false;
+        countUp(valEl, stat);
+      };
+      startProg();
+    },380);
+  } else {
+    // ── OPERATOR: glitch + scramble ──
+    cancelDisp(); transitioning=true;
+    valEl.classList.add('glitching');
+    valEl.addEventListener('animationend',()=>valEl.classList.remove('glitching'),{once:true});
+    _da1=display.animate([
+      {transform:'scaleX(1)',filter:'brightness(1)'},
+      {transform:'scaleX(.04)',filter:'brightness(2.5) saturate(2)'},
+    ],{duration:220,easing:'cubic-bezier(.7,0,1,.7)',fill:'forwards'});
+    setTimeout(()=>{
+      lblEl.textContent=stat.lbl;
+      valEl.textContent='########';
+      descEl.textContent=stat.desc;
+      cancelDisp();
+      _da2 = display.animate([
+        {transform:'scaleX(.04)',filter:'brightness(2.5) saturate(2)'},
+        {transform:'scaleX(1)',filter:'brightness(1)'}
+      ],{duration:260,easing:'cubic-bezier(0,.7,.3,1)',fill:'forwards'});
+      _da2.onfinish=()=>{
+        display.style.transform=''; display.style.filter='';
+        transitioning=false;
+        scrambleTo(valEl,stat.val,620);
+      };
+      startProg();
+    },230);
+  }
+}
+
+function startProg(){
+  const p=document.getElementById('bbProg');
+  p.classList.remove('ticking'); void p.offsetWidth;
+  p.style.setProperty('--dur',CYCLE_DUR+'ms');
+  p.classList.add('ticking');
+  p.addEventListener('animationend',()=>p.classList.remove('ticking'),{once:true});
+}
+
+function renderQueue(){
+  const q=document.getElementById('bbQueue');
+  q.innerHTML=STATS.map((s,i)=>`
+    <button class="tile${i===idx?' active':''}" data-i="${i}">
+      <div class="tv">${s.val}</div>
+      <div class="tl">${s.lbl}</div>
+    </button>`
+  ).join('');
+  q.querySelectorAll('.tile').forEach(b=>b.addEventListener('click',()=>{
+    const i=+b.dataset.i;
+    if(i===idx) return;
+    clearInterval(cycleTimer);
+    showStat(i,true);
+    cycleTimer=setInterval(()=>{ showStat((idx+1)%STATS.length,true); },CYCLE_DUR);
+  }));
+}
+
+/* ── SET MODE ── */
+function setMode(m){
+  mode=m;
+  root.setAttribute('data-mode',m);
+  document.querySelectorAll('.mode-toggle button').forEach(b=>b.setAttribute('data-on',b.dataset.set===m?'1':'0'));
+  document.querySelector('.wordmark .sl').style.color='';
+  document.getElementById('statusTxt').textContent=`billboard poc · ${m} mode · click tiles · auto-cycles 10s`;
+  drawCircuit(m==='operator');
+  clearInterval(cycleTimer);
+  showStat(0, false);
+  cycleTimer=setInterval(()=>{ showStat((idx+1)%STATS.length,true); },CYCLE_DUR);
+}
+
+/* ── EVENTS ── */
+document.getElementById('toggle').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(b) setMode(b.dataset.set);
+});
+
+/* ── INIT ── */
+drawCircuit(false);
+renderQueue();
+showStat(0,false);
+startProg();
+cycleTimer=setInterval(()=>{ showStat((idx+1)%STATS.length,true); },CYCLE_DUR);
+</script>
+</body>
+</html>
