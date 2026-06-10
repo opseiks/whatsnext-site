@@ -30,7 +30,7 @@ export default function Panel({ mode, stop, onSetMode, onAsk }: PanelProps) {
           <button className="choice" onClick={() => onSetMode('capital')}>
             <span>
               <span className="ct">I'm raising capital</span>
-              <span className="cs">Pre-seed → Series B · $250K–$2M</span>
+              <span className="cs">Pre-seed $50K–$250K · Series rounds up to $2M</span>
             </span>
             <span className="arw">→</span>
           </button>

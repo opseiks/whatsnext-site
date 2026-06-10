@@ -67,12 +67,12 @@ export const THESIS: Record<'capital' | 'operator', ThesisEntry[]> = {
 };
 
 export const DOMAINS: PortfolioDomain[] = [
-  { tag: 'AI · MULTI-AGENT · NEW 2026', name: 'AI Social Simulator', desc: 'Investment · Stealth · Multi-AI social physics simulation platform.', bg: '#081410' },
-  { tag: 'AI · ENGAGEMENT', name: 'Agentic Player-Support Stack', desc: 'Advisory · Autonomous player support & live ops intelligence.', bg: '#0c1608' },
-  { tag: 'GAMING · REAL MONEY', name: 'Real Money Gaming', desc: 'Land-based + iGaming · Advisory · Operator intelligence & platforms.', bg: '#0f0a06' },
-  { tag: 'GAMES · AAA', name: 'Live Service Action RPG', desc: 'Product advisory · Stealth · Pre-launch 2024+', bg: '#0c0c14' },
-  { tag: 'GAMES · DIGITAL', name: 'Social & Web3 Gaming', desc: 'Investment + Product advisory · 2024+', bg: '#090f0c' },
-  { tag: 'GAMES · CASUAL', name: 'Hybrid Casual Studio', desc: 'Investment + Prod Strategy · 2024+', bg: '#0b1008' },
+  { tag: 'AI · MULTI-AGENT · NEW 2026', name: 'AI Social Simulator', desc: 'Investment · Stealth · Multi-AI social physics simulation platform.', bg: '#081410', video: 'assets/portfolio/portfolio-ai-social.mp4' },
+  { tag: 'AI · ENGAGEMENT', name: 'Agentic Player-Support Stack', desc: 'Advisory · Autonomous player support & live ops intelligence.', bg: '#0c1608', video: 'assets/portfolio/portfolio-ai-engagement.mp4' },
+  { tag: 'GAMING · REAL MONEY', name: 'Real Money Gaming', desc: 'Land-based + iGaming · Advisory · Operator intelligence & platforms.', bg: '#0f0a06', video: 'assets/portfolio/portfolio-real-money.mp4' },
+  { tag: 'GAMES · AAA', name: 'Live Service Action RPG', desc: 'Product advisory · Stealth · Pre-launch 2024+', bg: '#0c0c14', video: 'assets/portfolio/portfolio-aaa-rpg.mp4' },
+  { tag: 'GAMES · DIGITAL', name: 'Social & Web3 Gaming', desc: 'Investment + Product advisory · 2024+', bg: '#090f0c', video: 'assets/portfolio/portfolio-web3.mp4' },
+  { tag: 'GAMES · CASUAL', name: 'Hybrid Casual Studio', desc: 'Investment + Prod Strategy · 2024+', bg: '#0b1008', video: 'assets/portfolio/portfolio-casual.mp4' },
 ];
 
 export const PRACTICE: PracticeItem[] = [

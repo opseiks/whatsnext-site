@@ -11,20 +11,22 @@ import ConnectStop from './stops/ConnectStop';
 interface WorldProps {
   mode: Mode;
   stop: Stop;
+  heroPhase: 1 | 2;
+  onHeroAdvance: () => void;
   onChipSync: (src: string) => void;
 }
 
-export default function World({ mode, stop, onChipSync }: WorldProps) {
+export default function World({ mode, stop, heroPhase, onHeroAdvance, onChipSync }: WorldProps) {
   return (
     <div className="world" data-stop={stop}>
-      <HeroStop />
+      <HeroStop heroPhase={heroPhase} onAdvance={onHeroAdvance} />
       <ProofStop mode={mode} active={stop === 1} onChipSync={onChipSync} />
       <ThesisStop mode={mode} active={stop === 2} />
       <PortfolioStop />
       <PracticeStop />
-      <EngageStop />
+      <EngageStop mode={mode} />
       <BuiltWithStop />
-      <ConnectStop />
+      <ConnectStop mode={mode} />
     </div>
   );
 }

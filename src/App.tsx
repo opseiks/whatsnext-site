@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { Mode, Stop, ChippyRef } from './types';
-import { CHIPS, STOP_NAMES, MAX_STOP } from './data';
+import { CHIPS, STOP_NAMES, MAX_STOP, BB } from './data';
 import TopBar from './components/TopBar';
 import World from './components/World';
 import ChippyRig from './components/ChippyRig';
@@ -9,12 +9,16 @@ import Rail from './components/Rail';
 export default function App() {
   const [mode, setModeState] = useState<Mode>('neutral');
   const [stop, setStopState] = useState<Stop>(0);
-  const [traveling, setTraveling] = useState(false);
-  const [chipSrc, setChipSrc] = useState('assets/chip-question-f.png');
+  const [traveling, setTraveling] = useState(true);
+  const [heroPhase, setHeroPhase] = useState<1 | 2>(1);
   const chippyRef = useRef<ChippyRef>(null);
   const wheelLockRef = useRef(false);
   const stopRef = useRef<Stop>(0);
-  const travelingRef = useRef(false);
+  const travelingRef = useRef(true);
+  const heroPhaseRef = useRef<1 | 2>(1);
+
+  useEffect(() => { travelingRef.current = traveling; }, [traveling]);
+  useEffect(() => { heroPhaseRef.current = heroPhase; }, [heroPhase]);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-mode', mode);
@@ -26,7 +30,6 @@ export default function App() {
 
   const setMode = useCallback((m: 'capital' | 'operator') => {
     setModeState(m);
-    setChipSrc(CHIPS[m][0]);
   }, []);
 
   const goToStop = useCallback((n: Stop) => {
@@ -42,7 +45,12 @@ export default function App() {
 
     setTimeout(() => {
       const m = document.documentElement.getAttribute('data-mode') as Mode || 'neutral';
-      setChipSrc(CHIPS[m === 'neutral' ? 'neutral' : m][0]);
+      let face = CHIPS[m === 'neutral' ? 'neutral' : m][0];
+      if (n === 1 && m !== 'neutral') {
+        const bbData = BB[m as 'capital' | 'operator'];
+        if (bbData?.[0]?.chip) face = bbData[0].chip;
+      }
+      chippyRef.current?.setFace(face);
       chippyRef.current?.revealPanel();
       travelingRef.current = false;
       setTraveling(false);
@@ -50,11 +58,36 @@ export default function App() {
   }, []);
 
   const handleSetMode = useCallback((m: 'capital' | 'operator') => {
-    setMode(m);
-    if (stop === 0 && !travelingRef.current) {
-      setTimeout(() => goToStop(1), 460);
+    if (stopRef.current === 0 && !travelingRef.current) {
+      travelingRef.current = true;
+      setTraveling(true);
+      chippyRef.current?.hidePanel();
+      setMode(m);
+      setTimeout(() => {
+        travelingRef.current = false;
+        goToStop(1 as Stop);
+      }, 460);
+    } else {
+      setMode(m);
     }
-  }, [stop, setMode, goToStop]);
+  }, [setMode, goToStop]);
+
+  // Hero phase 1 → 2: click anywhere on hero to advance
+  const advanceHero = useCallback(() => {
+    if (heroPhaseRef.current !== 1) return;
+    setHeroPhase(2);
+    heroPhaseRef.current = 2;
+    chippyRef.current?.enterHero();
+    setTimeout(() => {
+      travelingRef.current = false;
+      setTraveling(false);
+    }, 1700);
+  }, []);
+
+  // Billboard chip sync via turn-sequence flip
+  const handleChipSync = useCallback((src: string) => {
+    chippyRef.current?.flipTo(src);
+  }, []);
 
   useEffect(() => {
     const onWheel = (e: WheelEvent) => {
@@ -65,6 +98,7 @@ export default function App() {
       goToStop((stopRef.current + (e.deltaY > 0 ? 1 : -1)) as Stop);
     };
     const onKey = (e: KeyboardEvent) => {
+      if (travelingRef.current) return;
       if (e.key === 'ArrowDown' || e.key === 'PageDown') goToStop((stopRef.current + 1) as Stop);
       if (e.key === 'ArrowUp' || e.key === 'PageUp') goToStop((stopRef.current - 1) as Stop);
     };
@@ -80,19 +114,30 @@ export default function App() {
 
   return (
     <>
-      <TopBar mode={mode} stop={stop} onSetMode={handleSetMode} onNavigate={goToStop} />
+      <TopBar
+        mode={mode}
+        stop={stop}
+        heroPhase={heroPhase}
+        onSetMode={handleSetMode}
+        onNavigate={goToStop}
+      />
       <div className="fnote">{fnote}</div>
 
-      <World mode={mode} stop={stop} onChipSync={setChipSrc} />
+      <World
+        mode={mode}
+        stop={stop}
+        heroPhase={heroPhase}
+        onHeroAdvance={advanceHero}
+        onChipSync={handleChipSync}
+      />
 
       <ChippyRig
         ref={chippyRef}
         mode={mode}
         stop={stop}
         traveling={traveling}
+        heroPhase={heroPhase}
         onSetMode={handleSetMode}
-        chipSrc={chipSrc}
-        onChipSrcChange={setChipSrc}
       />
 
       <Rail stop={stop} onNavigate={goToStop} />

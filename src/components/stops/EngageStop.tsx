@@ -1,4 +1,13 @@
-export default function EngageStop() {
+import type { Mode } from '../../types';
+
+interface EngageStopProps {
+  mode: Mode;
+}
+
+export default function EngageStop({ mode }: EngageStopProps) {
+  const opActive = mode === 'operator';
+  const capActive = mode === 'capital';
+
   return (
     <section className="stop">
       <div className="engage-bg" />
@@ -14,22 +23,24 @@ export default function EngageStop() {
           </p>
         </div>
         <div className="eg-cards">
-          <div className="eg-card op-card">
+          <div className={`eg-card op-card${opActive ? ' eg-active' : capActive ? ' eg-inactive' : ''}`}>
             <div className="eg-card-role">as <em>operators &amp; partners</em></div>
-            <div className="eg-card-stmt">We roll up sleeves.</div>
+            <div className="eg-card-stmt">We roll up our sleeves.</div>
             <div className="eg-card-desc">
-              Fractional, project, or retainer. Corporate strategy, product management, game design,
-              live ops, AI transformation, go-to-market, executive sparring.
+              Fractional, project, or retainer. Corporate strategy,
+              product management, game design, live ops, AI transformation,
+              go-to-market, executive sparring.
             </div>
-            <button className="eg-card-btn">Brief us →</button>
+            <button className="eg-card-btn">Engage with us</button>
           </div>
-          <div className="eg-card cap-card">
+          <div className={`eg-card cap-card${capActive ? ' eg-active' : opActive ? ' eg-inactive' : ''}`}>
             <div className="eg-card-role">as <em>investors</em></div>
             <div className="eg-card-stmt">We write checks.</div>
             <div className="eg-card-desc">
-              Pre-seed through Series B. $250K to $2M. We only back what we'd build ourselves.
+              Angel through Series B. $50K to $2M.
+              We only back what we would build ourselves.
             </div>
-            <button className="eg-card-btn">Pitch us →</button>
+            <button className="eg-card-btn">Pitch us</button>
           </div>
         </div>
       </div>

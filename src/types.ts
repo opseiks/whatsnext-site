@@ -23,6 +23,7 @@ export interface PortfolioDomain {
   name: string;
   desc: string;
   bg: string;
+  video: string;
 }
 
 export interface PracticeItem {
@@ -53,4 +54,8 @@ export interface PanelCopy {
 export interface ChippyRef {
   triggerTravel: () => void;
   revealPanel: () => void;
+  enterHero: () => void;
+  flipTo: (src: string) => void;
+  setFace: (src: string) => void;
+  hidePanel: () => void;
 }

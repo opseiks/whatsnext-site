@@ -1,4 +1,12 @@
-export default function ConnectStop() {
+import type { Mode } from '../../types';
+
+interface ConnectStopProps {
+  mode: Mode;
+}
+
+export default function ConnectStop({ mode }: ConnectStopProps) {
+  const isOp = mode === 'operator';
+
   return (
     <section className="stop">
       <div className="cn-bg" />
@@ -10,12 +18,20 @@ export default function ConnectStop() {
           We'll get back inside two business days.
         </p>
         <div className="cn-cta">
-          <a className="cn-btn" href="mailto:info@whatsnext.digital?subject=Pitch%20via%20WND">
-            Pitch us → info@whatsnext.digital
-          </a>
-          <a className="cn-btn book" href="https://calendly.com/whatsnext" target="_blank" rel="noreferrer">
-            Book a 30 Minute Call
-          </a>
+          {isOp ? (
+            <>
+              <a className="cn-btn" href="mailto:info@whatsnext.digital?subject=Operator%20Engagement">
+                Engage with us
+              </a>
+              <a className="cn-btn book" href="https://calendly.com/whatsnext" target="_blank" rel="noreferrer">
+                Book a call
+              </a>
+            </>
+          ) : (
+            <a className="cn-btn" href="mailto:info@whatsnext.digital?subject=Pitch%20via%20WND">
+              Pitch us
+            </a>
+          )}
         </div>
       </div>
       <div className="cn-tagline">Betting on the people building what's next.</div>

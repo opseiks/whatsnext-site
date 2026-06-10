@@ -12,6 +12,12 @@ export default function PortfolioStop() {
         <div className="pcards">
           {DOMAINS.map((d, i) => (
             <div key={i} className="pcard" style={{ background: d.bg }}>
+              <video
+                className="pcard-video"
+                src={d.video}
+                autoPlay muted loop playsInline
+                onError={(e) => { (e.target as HTMLVideoElement).style.display = 'none'; }}
+              />
               <div className="ptag-pill"><span className="pdot" />{d.tag}</div>
               <div className="pcard-inner">
                 <div className="pname">{d.name}</div>

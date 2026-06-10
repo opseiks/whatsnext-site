@@ -71,6 +71,15 @@ export default function ThesisStop({ mode, active }: ThesisStopProps) {
 
         {/* Capital: editorial */}
         <div className="th-edit" ref={editRef}>
+          <div className="th-img-placeholder">
+            <img
+              src={`/assets/thesis/thesis-cap-${String(thIdx + 1).padStart(2, '0')}.png`}
+              alt=""
+              className="th-img-asset"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).nextElementSibling!.removeAttribute('style'); }}
+            />
+            <span className="th-img-hint">{`thesis-cap-${String(thIdx + 1).padStart(2, '0')}.png`}</span>
+          </div>
           <div className="th-key">{mode === 'neutral' ? '—' : stmt?.key}</div>
           <div
             className="th-stmt"
@@ -112,7 +121,13 @@ export default function ThesisStop({ mode, active }: ThesisStopProps) {
                   onClick={isTop ? advanceCard : undefined}
                 >
                   <div className="card-img">
-                    <div className="card-img-hint">IMG · VIDEO</div>
+                    <img
+                      src={`/assets/thesis/thesis-op-${String(dataIdx + 1).padStart(2, '0')}.png`}
+                      alt=""
+                      className="card-img-asset"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).nextElementSibling!.removeAttribute('style'); }}
+                    />
+                    <div className="card-img-hint" style={{ display: 'none' }}>{`thesis-op-${String(dataIdx + 1).padStart(2, '0')}.png`}</div>
                   </div>
                   <div className="card-content">
                     <div className="card-key">{s.key}</div>
