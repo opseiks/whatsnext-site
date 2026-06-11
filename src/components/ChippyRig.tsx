@@ -13,6 +13,44 @@ interface ChippyRigProps {
 
 const IDLE_STOPS = [0, 2, 3];
 
+// Personality bounce: squash on impact, stretch on the overshoot up.
+const PERSONALITY_BOUNCE_KEYFRAMES: Keyframe[] = [
+  { transform: 'translateY(0) scaleY(1) rotateX(7deg) rotateZ(-2deg)', easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' },
+  { transform: 'translateY(50px) scaleY(0.85) rotateX(2deg) rotateZ(-6deg)', offset: 0.5, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)' },
+  { transform: 'translateY(-40px) scaleY(1.15) rotateX(14deg) rotateZ(4deg)', offset: 0.75, easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' },
+  { transform: 'translateY(0) scaleY(1) rotateX(7deg) rotateZ(-2deg)' },
+];
+
+// Spin idle: small wiggle (¼ turn left, back, ¼ turn right), bigger swing
+// to 40% left, spring back through upright the long way around to ¼ past
+// upright on the right ("missed his stop"), pause ~1s, snap back, then
+// damped wobble to rest. rotateX(7deg) baseline preserved throughout so
+// the perspective tilt doesn't pop.
+const SPIN_IDLE_KEYFRAMES: Keyframe[] = [
+  // 0ms — rest
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(-2deg)', easing: 'cubic-bezier(0.45,0.05,0.55,0.95)' },
+  // 600ms — ¼ turn left
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(-90deg)', offset: 0.109, easing: 'cubic-bezier(0.45,0.05,0.55,0.95)' },
+  // 1000ms — back to upright
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(0deg)', offset: 0.182, easing: 'cubic-bezier(0.45,0.05,0.55,0.95)' },
+  // 1400ms — continue to ¼ turn right
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(90deg)', offset: 0.255, easing: 'cubic-bezier(0.45,0,0.55,1)' },
+  // 2300ms — bigger swing to 40% left
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(-144deg)', offset: 0.418, easing: 'cubic-bezier(0.22,1,0.36,1)' },
+  // 3100ms — spring through upright the long way around to +90° (overshoots his stop)
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(90deg)', offset: 0.564, easing: 'linear' },
+  // 4100ms — hold for ~1s
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(90deg)', offset: 0.745, easing: 'cubic-bezier(0.4,0,0.2,1)' },
+  // 4500ms — snap back past upright (overshoot to -10°)
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(-10deg)', offset: 0.818, easing: 'ease-in-out' },
+  // Damped wobble settle: +6° → -4° → +2° → -1° → rest
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(6deg)', offset: 0.854, easing: 'ease-in-out' },
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(-4deg)', offset: 0.890, easing: 'ease-in-out' },
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(2deg)', offset: 0.927, easing: 'ease-in-out' },
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(-1deg)', offset: 0.963, easing: 'ease-in-out' },
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(-2deg)' },
+];
+
 const ChippyRig = forwardRef<ChippyRef, ChippyRigProps>(
   ({ mode, stop, traveling, heroPhase, onSetMode }, ref) => {
     const chipImgRef = useRef<HTMLImageElement>(null);
@@ -23,6 +61,11 @@ const ChippyRig = forwardRef<ChippyRef, ChippyRigProps>(
     const idleTimerRef = useRef<ReturnType<typeof setInterval>>();
     const faceIdxRef = useRef(0);
     const idleCountRef = useRef(0);
+    // Alternates between personality bounce (0) and spin idle (1) on each 4th-cycle trigger.
+    const idleBehaviorRef = useRef(0);
+    // True while a special idle (bounce or spin) is running; suppresses the 4.2s face-flip
+    // so the turn frames don't tear through the rotation in progress.
+    const specialIdleRef = useRef(false);
 
     const modeRef = useRef(mode);
     const stopRef = useRef(stop);
@@ -60,7 +103,7 @@ const ChippyRig = forwardRef<ChippyRef, ChippyRigProps>(
     }, []);
 
     const doFlip = useCallback(() => {
-      if (idleFlippingRef.current || travelingRef.current) return;
+      if (idleFlippingRef.current || travelingRef.current || specialIdleRef.current) return;
       const chips = CHIPS[modeRef.current];
       faceIdxRef.current = (faceIdxRef.current + 1) % chips.length;
       flipChipTo(chips[faceIdxRef.current]);
@@ -70,17 +113,17 @@ const ChippyRig = forwardRef<ChippyRef, ChippyRigProps>(
         idleCountRef.current = 0;
         const bobEl = coinBobRef.current;
         if (bobEl) {
+          const useSpin = idleBehaviorRef.current === 1;
+          idleBehaviorRef.current = useSpin ? 0 : 1;
+          specialIdleRef.current = true;
           bobEl.style.animationPlayState = 'paused';
-          const bounce = bobEl.animate(
-            [
-              { transform: 'translateY(0) scaleY(1) rotateX(7deg) rotateZ(-2deg)', easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' },
-              { transform: 'translateY(50px) scaleY(0.85) rotateX(2deg) rotateZ(-6deg)', offset: 0.5, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)' },
-              { transform: 'translateY(-40px) scaleY(1.15) rotateX(14deg) rotateZ(4deg)', offset: 0.75, easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' },
-              { transform: 'translateY(0) scaleY(1) rotateX(7deg) rotateZ(-2deg)' },
-            ],
-            { duration: 1600 }
-          );
-          bounce.onfinish = () => { bobEl.style.animationPlayState = ''; };
+          const anim = useSpin
+            ? bobEl.animate(SPIN_IDLE_KEYFRAMES, { duration: 5500 })
+            : bobEl.animate(PERSONALITY_BOUNCE_KEYFRAMES, { duration: 1600 });
+          anim.onfinish = () => {
+            bobEl.style.animationPlayState = '';
+            specialIdleRef.current = false;
+          };
         }
       }
     }, [flipChipTo]);
