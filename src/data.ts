@@ -148,7 +148,7 @@ export const PCOPY: Record<Mode, PanelCopy[]> = {
     { h: 'Where we invest and advise. <span class="aword">Hands on.</span>', b: ['Active checks plus operator involvement.', 'We don\'t just wire money — we work.', 'Six domains, all have been our day job.'], s: 'Six practice areas · operator-led' },
     { h: 'We invest time <span class="aword">before we invest capital.</span>', b: ['15-minute call. No deck required.', 'We get close to the work first.', 'Senior operator attention at every stage.'], s: 'Pre-seed $50K–$250K · Series up to $2M' },
     { h: 'Names that <span class="aword">verify.</span>', b: ['$1.5B exit co-stewarded. Not managed.', 'WMS → Scientific Games. Real money.', '40+ brands in advertising + broadcast.'], s: '$1.5B exit · WMS → Scientific Games' },
-    { h: 'Ready to <span class="aword">move?</span>', b: ['We answer every email. Same day.', 'Pre-seed through Series B. $250K–$2M.', 'We only back what we\'d build ourselves.'], s: 'info@whatsnext.digital · 2-day response' },
+    { h: 'Let\'s talk about <span class="aword">what you\'re building.</span>', b: ['We read every pitch. No deck required to start.', 'We move fast when something is right.', 'We have been on your side of the table.'], s: 'Angel through Series B · $50K to $2M' },
   ],
   operator: [
     { h: 'You need an operator. <span class="aword">Here\'s the work.</span>', b: ['Fractional, project, or retainer — sleeves up.', 'Product, game design, live ops, GTM, AI.', 'Senior attention most firms charge fund fees for.'], s: '$400M+ launched · concept → scale' },
@@ -158,6 +158,6 @@ export const PCOPY: Record<Mode, PanelCopy[]> = {
     { h: 'Six domains. All of them <span class="aword">shipped.</span>', b: ['These aren\'t services — they\'re scars.', 'Pick a domain and we\'ll talk about what we\'ve actually done.', 'No PowerPoint consultants.'], s: '$400M+ across all six · concept → scale' },
     { h: 'We get in the work. <span class="aword">Not just the room.</span>', b: ['Fractional, project, or retainer.', 'We\'ve shipped in every domain we advise on.', 'No PowerPoint consultants.'], s: '$400M+ launched · concept to scale' },
     { h: 'Places we\'ve <span class="aword">shipped.</span>', b: ['Console, mobile, social, live ops.', 'Not advisors. Operators with skin in it.', 'The scars are the resume.'], s: '$400M+ across all domains · hands-on' },
-    { h: 'Building what <span class="aword">shouldn\'t exist yet?</span>', b: ['Tell us what you\'re working on.', 'Early stage or in market — doesn\'t matter.', 'We get back inside two business days.'], s: 'Betting on people building what\'s next.' },
+    { h: 'Let\'s get in <span class="aword">the work.</span>', b: ['Fractional, project, or retainer.', 'We only engage where we can make a real difference.', 'No retainer theater.'], s: '$400M+ launched · still building' },
   ],
 };

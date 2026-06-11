@@ -16,10 +16,7 @@ Copy needs refinement for both audiences.
 
 ### Fix 1: Chippy position
 Chippy and his panel are jammed at the top-left corner.
-Drop the Chippy rig down by 30% of the viewport height.
-It should feel like it is anchoring the left side of the page,
-not floating at the top.
-Same size as other corner stops. Width 340px. Chip 132px.
+Drop the Chippy rig down to match his position on the Engage page
 
 ### Fix 2: Mode-split CTAs — verify and clean up
 The CTA buttons should switch based on mode.
@@ -40,7 +37,7 @@ in the arena. Not looking for the entrance."
 Primary button: "Engage with us"
 Links to: mailto:info@whatsnext.digital?subject=Operator%20Engagement
 Secondary button: "Book a call"
-Links to: https://calendly.com/whatsnext (placeholder, replace when live)
+Links to: already gave you the calendry link on the engage page
 
 Both modes:
 Tagline at the bottom of the section:
