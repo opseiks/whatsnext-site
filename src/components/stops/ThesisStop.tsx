@@ -8,6 +8,15 @@ const CARD_POS = [
   { tx: 'calc(-50% + 74px)', ty: 'calc(-50% + 26px)', rz: 23, sc: 0.74, z: 4, op: 0.76 },
   { tx: 'calc(-50% - 26px)', ty: 'calc(-50% + 6px)', rz: -8, sc: 0.93, z: 8, op: 0.94 },
 ];
+
+// Hover spread: pull each card out so every face is partially visible and individually clickable.
+const CARD_POS_SPREAD = [
+  { tx: '-50%', ty: 'calc(-50% - 6px)', rz: 0, sc: 1, z: 10, op: 1 },
+  { tx: 'calc(-50% + 150px)', ty: 'calc(-50% - 4px)', rz: 6, sc: 0.94, z: 7, op: 1 },
+  { tx: 'calc(-50% + 268px)', ty: 'calc(-50% + 6px)', rz: 12, sc: 0.88, z: 4, op: 1 },
+  { tx: 'calc(-50% - 170px)', ty: 'calc(-50% - 4px)', rz: -6, sc: 0.94, z: 8, op: 1 },
+];
+
 const TH_DUR = 12000;
 
 interface ThesisStopProps {
@@ -19,6 +28,7 @@ export default function ThesisStop({ mode, active }: ThesisStopProps) {
   const [thIdx, setThIdx] = useState(0);
   const [cardOrder, setCardOrder] = useState([0, 1, 2, 3]);
   const [cardExiting, setCardExiting] = useState(false);
+  const [fanHovered, setFanHovered] = useState(false);
   const thTimerRef = useRef<ReturnType<typeof setInterval>>();
   const editRef = useRef<HTMLDivElement>(null);
 
@@ -27,7 +37,7 @@ export default function ThesisStop({ mode, active }: ThesisStopProps) {
   const advanceCard = useCallback(() => {
     if (cardExiting) return;
     if (mode !== 'operator') {
-      setThIdx(i => { const next = (i + 1) % arr.length; return next; });
+      setThIdx(i => (i + 1) % arr.length);
       return;
     }
     setCardExiting(true);
@@ -58,7 +68,24 @@ export default function ThesisStop({ mode, active }: ThesisStopProps) {
     }
   };
 
+  // Bring any back card to the front without an exit animation; the CSS
+  // transition on .belief-card slides every card into its new slot.
+  const jumpToCard = useCallback((dataIdx: number) => {
+    if (cardExiting) return;
+    setCardOrder(prev => {
+      const idx = prev.indexOf(dataIdx);
+      if (idx <= 0) return prev;
+      return [...prev.slice(idx), ...prev.slice(0, idx)];
+    });
+    clearInterval(thTimerRef.current);
+    if (active && mode !== 'neutral') {
+      thTimerRef.current = setInterval(advanceCard, TH_DUR);
+    }
+  }, [cardExiting, active, mode, advanceCard]);
+
   const stmt = arr[thIdx];
+  const positions = fanHovered ? CARD_POS_SPREAD : CARD_POS;
+  const capImg = `thesis-cap-${String(thIdx + 1).padStart(2, '0')}.png`;
 
   return (
     <section className="stop">
@@ -69,22 +96,24 @@ export default function ThesisStop({ mode, active }: ThesisStopProps) {
           <h2 className="th-title">Principles we don't <em>negotiate.</em></h2>
         </div>
 
-        {/* Capital: editorial */}
+        {/* Capital: editorial unified card. Image fills the card; headline overlays the bottom. */}
         <div className="th-edit" ref={editRef}>
-          <div className="th-img-placeholder">
-            <img
-              src={`/assets/thesis/thesis-cap-${String(thIdx + 1).padStart(2, '0')}.png`}
-              alt=""
-              className="th-img-asset"
-              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).nextElementSibling!.removeAttribute('style'); }}
-            />
-            <span className="th-img-hint">{`thesis-cap-${String(thIdx + 1).padStart(2, '0')}.png`}</span>
-          </div>
-          <div className="th-key">{mode === 'neutral' ? '—' : stmt?.key}</div>
-          <div
-            className="th-stmt"
-            dangerouslySetInnerHTML={{ __html: mode === 'neutral' ? 'Select a track to reveal the thesis.' : (stmt?.stmt ?? '') }}
-          />
+          <article className="th-card">
+            <div className="th-card-media">
+              <img
+                src={`/assets/thesis/${capImg}`}
+                alt=""
+                className="th-card-img-asset"
+              />
+            </div>
+            <div className="th-card-overlay">
+              <div className="th-key">{mode === 'neutral' ? '—' : stmt?.key}</div>
+              <div
+                className="th-stmt"
+                dangerouslySetInnerHTML={{ __html: mode === 'neutral' ? 'Select a track to reveal the thesis.' : (stmt?.stmt ?? '') }}
+              />
+            </div>
+          </article>
           <div className="th-sub">{stmt?.sub}</div>
           <div className="th-nav">
             {arr.map((_, i) => (
@@ -97,12 +126,16 @@ export default function ThesisStop({ mode, active }: ThesisStopProps) {
           </div>
         </div>
 
-        {/* Operator: card fan */}
-        <div className="th-cards-wrap">
+        {/* Operator: card fan. Hover spreads all 4 cards; clicking any card brings it to the front. */}
+        <div
+          className="th-cards-wrap"
+          onMouseEnter={() => setFanHovered(true)}
+          onMouseLeave={() => setFanHovered(false)}
+        >
           <div className="th-cards">
             {[...cardOrder].reverse().map((dataIdx, visualPos) => {
               const posIdx = cardOrder.length - 1 - visualPos;
-              const p = CARD_POS[posIdx];
+              const p = positions[posIdx];
               const isTop = posIdx === 0;
               const s = arr[dataIdx] || arr[0];
               return (
@@ -118,14 +151,18 @@ export default function ThesisStop({ mode, active }: ThesisStopProps) {
                     opacity: isTop && cardExiting ? 0 : p.op,
                     transition: cardExiting && isTop ? 'transform .38s cubic-bezier(.6,0,1,.6), opacity .38s ease' : undefined,
                   }}
-                  onClick={isTop ? advanceCard : undefined}
+                  onClick={isTop ? advanceCard : () => jumpToCard(dataIdx)}
                 >
                   <div className="card-img">
                     <img
                       src={`/assets/thesis/thesis-op-${String(dataIdx + 1).padStart(2, '0')}.png`}
                       alt=""
                       className="card-img-asset"
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).nextElementSibling!.removeAttribute('style'); }}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                        const sibling = (e.target as HTMLImageElement).nextElementSibling as HTMLElement | null;
+                        if (sibling) sibling.removeAttribute('style');
+                      }}
                     />
                     <div className="card-img-hint" style={{ display: 'none' }}>{`thesis-op-${String(dataIdx + 1).padStart(2, '0')}.png`}</div>
                   </div>

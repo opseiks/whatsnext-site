@@ -24,7 +24,7 @@ export default function HeroStop({ heroPhase, onAdvance }: HeroStopProps) {
       style={{ cursor: heroPhase === 1 ? 'pointer' : undefined }}
     >
       <div className="hero-bg">
-        <video src="/assets/hero-loop.mp4" autoPlay muted loop playsInline />
+        <video src="/assets/hero/hero-loop.mp4" autoPlay muted loop playsInline />
       </div>
       <div className={`hero-copy${heroPhase === 2 ? ' hero-copy--p2' : ''}`}>
         <div className="hero-l1" style={{ opacity: l1Vis ? 1 : 0 }}>

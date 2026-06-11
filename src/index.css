@@ -216,7 +216,8 @@ h1 .it {
 .billboard { display: flex; flex-direction: column; gap: 14px; flex: 1; min-height: 0; }
 .bb-frame {
   position: relative; border: 1px solid var(--line); border-radius: 8px;
-  background: rgba(6,6,10,0.92); padding: 32px 28px 26px; overflow: hidden; flex: 1;
+  background: rgba(6,6,10,0.92); padding: clamp(28px, 6vh, 64px) 32px; overflow: hidden; flex: 1;
+  display: flex; flex-direction: column; justify-content: center; gap: 14px;
   box-shadow: 0 22px 56px rgba(0,0,0,0.58), inset 0 0 0 1px rgba(255,255,255,0.04), inset 0 1px 0 rgba(255,255,255,0.07);
 }
 [data-mode='capital'] .bb-frame { border-color: rgba(200,162,75,0.22); }
@@ -254,9 +255,9 @@ h1 .it {
   100% { top: calc(100% + 1px); opacity: 0; }
 }
 .bb-lbl {
-  font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.16em;
-  text-transform: uppercase; color: var(--acc); margin-bottom: 10px;
-  display: flex; align-items: center; gap: 7px; min-height: 16px;
+  font-family: 'Space Mono', monospace; font-size: 14px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--acc); margin-bottom: 4px;
+  display: flex; align-items: center; gap: 8px; min-height: 18px;
   position: relative; z-index: 6; transition: color 0.6s;
 }
 .bb-lbl.vis::before {
@@ -264,7 +265,7 @@ h1 .it {
   background: var(--signal); box-shadow: 0 0 7px var(--signal);
   animation: lp 2s infinite; flex: none;
 }
-[data-mode='operator'] .bb-lbl { font-family: 'Press Start 2P', monospace; font-size: 8px; }
+[data-mode='operator'] .bb-lbl { font-family: 'Press Start 2P', monospace; font-size: 11px; }
 .bb-display { transform-origin: 50% 30%; position: relative; z-index: 6; }
 .bb-val {
   font-weight: 900; line-height: 0.82; letter-spacing: -0.05em;
@@ -296,7 +297,7 @@ h1 .it {
   45%        { transform: none; }
 }
 .bb-desc { font-size: 18px; color: var(--muted); line-height: 1.5; max-width: 56ch; position: relative; z-index: 6; }
-[data-mode='operator'] .bb-desc { font-family: 'Space Mono', monospace; font-size: 15px; color: rgba(185,242,58,0.5); }
+[data-mode='operator'] .bb-desc { font-family: 'Space Mono', monospace; font-size: 16px; color: rgba(185,242,58,0.5); }
 .bb-prog {
   position: absolute; bottom: 0; left: 0; height: 2px; width: 0; z-index: 7;
   transition: background 0.6s;
@@ -308,7 +309,7 @@ h1 .it {
 .bb-queue { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 [data-mode='capital'] .bb-tile {
   cursor: pointer; border: 1px solid var(--line); border-radius: 6px;
-  padding: 14px 16px; background: rgba(255,255,255,0.02); transition: 0.22s;
+  padding: 18px 18px; background: rgba(255,255,255,0.02); transition: 0.22s;
   text-align: left; font-family: inherit; color: var(--paper);
 }
 [data-mode='capital'] .bb-tile:hover { border-color: rgba(200,162,75,0.35); background: rgba(255,255,255,0.04); }
@@ -316,15 +317,15 @@ h1 .it {
 [data-mode='capital'] .tv { font-weight: 800; font-size: 22px; letter-spacing: -0.02em; color: var(--paper); line-height: 1; }
 [data-mode='capital'] .tl { font-size: 13px; color: var(--muted); margin-top: 6px; font-family: 'Space Mono', monospace; }
 [data-mode='operator'] .bb-tile {
-  cursor: pointer; border: 1px solid rgba(185,242,58,0.18); padding: 14px 16px;
+  cursor: pointer; border: 1px solid rgba(185,242,58,0.18); padding: 18px 18px;
   background: rgba(4,10,4,0.85); transition: 0.22s; text-align: left;
   font-family: inherit; color: var(--paper);
   clip-path: polygon(7px 0%, 100% 0%, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0% 100%, 0% 7px);
 }
 [data-mode='operator'] .bb-tile:hover { border-color: var(--signal); background: rgba(185,242,58,0.06); }
 [data-mode='operator'] .bb-tile.active { border-color: var(--signal); background: rgba(185,242,58,0.08); }
-[data-mode='operator'] .tv { font-family: 'Press Start 2P', monospace; font-size: 14px; color: var(--signal); text-shadow: 0 0 10px var(--signal); line-height: 1.4; }
-[data-mode='operator'] .tl { font-family: 'Press Start 2P', monospace; font-size: 9px; color: rgba(185,242,58,0.45); margin-top: 6px; line-height: 1.6; }
+[data-mode='operator'] .tv { font-family: 'Press Start 2P', monospace; font-size: 18px; color: var(--signal); text-shadow: 0 0 10px var(--signal); line-height: 1.4; }
+[data-mode='operator'] .tl { font-family: 'Press Start 2P', monospace; font-size: 12px; color: rgba(185,242,58,0.45); margin-top: 8px; line-height: 1.6; }
 
 /* ── THESIS STOP ── */
 .thesis-bg {
@@ -339,36 +340,65 @@ h1 .it {
 .thesis-full {
   position: absolute; z-index: 2; display: flex; flex-direction: column;
   top: 10vh; bottom: 10vh; left: 0; right: 0;
-  padding: 0 396px 0 60px; gap: 12px;
+  /* Right padding clears the rig (382) + 5% viewport buffer + a small gutter. */
+  padding: 0 calc(5% + 406px) 0 60px; gap: 12px;
 }
 .th-head { flex: none; }
 .th-title { font-weight: 800; font-size: clamp(26px, 3.4vw, 56px); line-height: 0.93; letter-spacing: -0.025em; margin-top: 6px; }
 .th-title em { font-style: normal; color: var(--acc); transition: color 0.6s; }
-.th-edit { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 18px; }
-.th-img-placeholder {
-  position: relative; width: 100%; max-width: 52ch; aspect-ratio: 21/9; border-radius: 8px;
-  background: rgba(255,255,255,0.03); border: 1px solid var(--line);
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden;
+.th-edit { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 18px; min-height: 0; }
+[data-mode='operator'] .th-edit { display: none; }
+
+/* Capital editorial card: LETTERBOX. Image fills the unit, headline overlaid at the bottom.
+   Distinct setup from the operator card fan — different aspect, different content destiny. */
+.th-card {
+  position: relative; display: block;
+  width: 100%; max-width: clamp(520px, 60vw, 960px);
+  aspect-ratio: 21 / 9;
+  border-radius: 14px; overflow: hidden;
+  background: linear-gradient(160deg, rgba(20,20,24,0.6), rgba(11,11,13,0.55));
+  border: 1px solid var(--line);
+  box-shadow: 0 28px 64px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
 }
-.th-img-asset {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 8px;
+.th-card-media {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.02);
 }
-.th-img-hint {
-  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--muted2);
-  border: 1px dashed rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 4px;
-}
-.card-img-asset {
+.th-card-img-asset {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
 }
-[data-mode='operator'] .th-edit { display: none; }
+.th-card-overlay {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: clamp(36px, 7vh, 80px) clamp(24px, 2.6vw, 40px) clamp(18px, 2.4vh, 28px);
+  background: linear-gradient(to top,
+    rgba(0,0,0,0.92) 0%,
+    rgba(0,0,0,0.72) 38%,
+    rgba(0,0,0,0.32) 70%,
+    rgba(0,0,0,0) 100%);
+  z-index: 2;
+}
+.th-card-overlay .th-key { margin-bottom: 8px; }
+.th-card-overlay .th-stmt {
+  font-size: clamp(22px, 2.4vw, 36px);
+  line-height: 1.06;
+  max-width: 32ch;
+}
+
 .th-key { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--acc); margin-bottom: 12px; transition: color 0.6s; }
 .th-stmt { font-weight: 800; font-size: clamp(26px, 4vw, 62px); line-height: 0.94; letter-spacing: -0.025em; color: var(--paper); text-wrap: balance; }
 .th-stmt .it { font-family: 'Cormorant', serif; font-style: italic; font-weight: 600; color: var(--acc); transition: color 0.6s; }
-.th-sub { font-size: clamp(15px, 1.4vw, 19px); color: var(--muted); line-height: 1.52; max-width: 40ch; margin-top: 18px; }
-.th-nav { display: flex; gap: 9px; align-items: center; margin-top: 22px; }
+/* min-height reserves space for ~2 lines so swapping between short ("We won't.")
+   and long sub-copy doesn't reflow .th-edit and visibly shift the card. */
+.th-sub { font-size: clamp(15px, 1.4vw, 19px); color: var(--muted); line-height: 1.52; max-width: 44ch; margin-top: 4px; min-height: calc(2 * 1.52em); }
+.th-nav { display: flex; gap: 9px; align-items: center; margin-top: 14px; }
 .th-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.18); cursor: pointer; border: 0; transition: 0.25s; }
 .th-dot.on { background: var(--acc); box-shadow: 0 0 8px var(--acc-glow); transition: background 0.6s, box-shadow 0.6s; }
+
+/* Operator card-fan image asset (unchanged behavior, kept here so the rule survives the refactor). */
+.card-img-asset {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+}
 .th-cards-wrap { flex: 1; display: none; position: relative; }
 [data-mode='operator'] .th-cards-wrap { display: block; }
 .th-cards { position: absolute; left: 40%; top: 50%; transform: translateX(-50%) translateY(-52%); }
@@ -411,9 +441,9 @@ h1 .it {
 }
 .portfolio-full {
   position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column;
-  padding: 76px 52px 28px 396px; gap: 8px;
+  /* Chippy owns the left 35% (rig + 5vw left gutter), grid owns the right 65%. */
+  padding: 76px 60px 28px 35%; gap: 8px;
 }
-[data-stop='3'] .portfolio-full { padding-left: 396px; padding-right: 52px; }
 .pf-head { flex: none; }
 .pf-title { font-weight: 800; font-size: clamp(26px, 3.8vw, 60px); line-height: 0.92; letter-spacing: -0.03em; margin-top: 6px; }
 .pf-title em { font-family: 'Cormorant', serif; font-style: italic; color: var(--signal); letter-spacing: 0; padding: 0 0.04em; }
@@ -427,8 +457,9 @@ h1 .it {
 .pcard:hover { transform: scale(1.025) translateY(-2px); box-shadow: 0 22px 50px rgba(0,0,0,0.65); }
 .pcard-video {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-  z-index: 0; opacity: 0.6;
+  z-index: 0; opacity: 0.6; transition: opacity 0.4s ease;
 }
+.pcard:hover .pcard-video { opacity: 1; }
 .pcard::before {
   content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
   background: repeating-linear-gradient(-45deg, rgba(0,0,0,0.3) 0, rgba(0,0,0,0.3) 6px, transparent 6px, transparent 12px);
@@ -593,8 +624,8 @@ h1 .it {
   transition: left 1.05s cubic-bezier(0.72,0,0.2,1), top 1.05s cubic-bezier(0.72,0,0.2,1), width 0.8s ease;
 }
 .rig[data-stop='1'] { left: calc(23% - 251px); top: calc(34% + 40px); }
-.rig[data-stop='2'] { left: calc(100% - 360px); top: 418px; width: 340px; }
-.rig[data-stop='3'] { left: 28px; top: 418px; width: 340px; }
+.rig[data-stop='2'] { left: calc(95% - 382px); top: 418px; width: 382px; }
+.rig[data-stop='3'] { left: 5%; top: 418px; width: 382px; }
 .rig[data-stop='4'] { left: calc(100% - 360px); top: 418px; width: 340px; }
 .rig[data-stop='5'] { left: 28px; top: 418px; width: 340px; }
 .rig[data-stop='6'] { left: calc(100% - 360px); top: 168px; width: 340px; }
@@ -605,11 +636,13 @@ h1 .it {
   position: absolute; width: 202px; height: 202px; top: -190px; right: -26px;
   z-index: 3; cursor: pointer; transition: width 0.5s ease, height 0.5s ease, top 0.5s ease;
 }
-.rig[data-stop='1'] .coin-wrap { width: 176px; height: 176px; top: -184px; right: auto; left: 6px; }
-.rig[data-stop='2'] .coin-wrap, .rig[data-stop='4'] .coin-wrap, .rig[data-stop='6'] .coin-wrap {
+.rig[data-stop='1'] .coin-wrap { width: 176px; height: 176px; top: -172px; right: auto; left: 6px; }
+.rig[data-stop='2'] .coin-wrap { width: 176px; height: 176px; top: -172px; left: auto; right: 6px; }
+.rig[data-stop='4'] .coin-wrap, .rig[data-stop='6'] .coin-wrap {
   width: 132px; height: 132px; top: -140px; left: auto; right: 6px;
 }
-.rig[data-stop='3'] .coin-wrap, .rig[data-stop='5'] .coin-wrap, .rig[data-stop='7'] .coin-wrap {
+.rig[data-stop='3'] .coin-wrap { width: 176px; height: 176px; top: -172px; left: 6px; right: auto; }
+.rig[data-stop='5'] .coin-wrap, .rig[data-stop='7'] .coin-wrap {
   width: 132px; height: 132px; top: -140px; left: 6px; right: auto;
 }
 .coin-bob {
@@ -655,6 +688,7 @@ h1 .it {
 .rig[data-stop='5'] .panel,
 .rig[data-stop='7'] .panel { transform-origin: top left; }
 .rig[data-stop='2'] .panel,
+.rig[data-stop='3'] .panel { max-width: 382px; }
 .rig[data-stop='4'] .panel,
 .rig[data-stop='6'] .panel { max-width: 340px; }
 .panel.panel-travel { visibility: hidden; }

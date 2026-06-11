@@ -38,9 +38,9 @@ export const BB: Record<'capital' | 'operator', BillboardStat[]> = {
     { val: '7+', num: 7, pre: '', suf: '+', dec: 0, lbl: 'Portfolio Active', desc: 'Companies in games, AI, AR & creator infrastructure.', chip: 'assets/chip-400-f.png' },
   ],
   operator: [
-    { val: '$1.5B', num: 1.5, pre: '$', suf: 'B', dec: 1, lbl: 'Exit on Record', desc: 'WMS Gaming → Scientific Games. Real money, real exit.', chip: 'assets/chip-2b-f.png' },
+    { val: '$400M+', num: 400, pre: '$', suf: 'M+', dec: 0, lbl: 'Launched and Shipped', desc: 'Products from concept to global scale — hands on.', chip: 'assets/chip-400-f.png' },
     { val: '20YRS', num: 20, pre: '', suf: 'YRS', dec: 0, lbl: 'Time in Domain', desc: 'Console, mobile, social & live ops. Not a tourist.', chip: 'assets/chip-20yrs-f.png' },
-    { val: '$400M+', num: 400, pre: '$', suf: 'M+', dec: 0, lbl: 'Launched & Shipped', desc: 'Products from concept to global scale — hands on.', chip: 'assets/chip-400-f.png' },
+    { val: '$1.5B', num: 1.5, pre: '$', suf: 'B', dec: 1, lbl: 'Exit on Record', desc: 'WMS Gaming → Scientific Games. Real money, real exit.', chip: 'assets/chip-2b-f.png' },
     { val: '$340M', num: 340, pre: '$', suf: 'M', dec: 0, lbl: 'Active Portfolio', desc: 'Games, AI & AR — still operating, not just advising.', chip: 'assets/chip-wnd-f.png' },
   ],
 };
@@ -67,12 +67,12 @@ export const THESIS: Record<'capital' | 'operator', ThesisEntry[]> = {
 };
 
 export const DOMAINS: PortfolioDomain[] = [
-  { tag: 'AI · MULTI-AGENT · NEW 2026', name: 'AI Social Simulator', desc: 'Investment · Stealth · Multi-AI social physics simulation platform.', bg: '#081410', video: 'assets/portfolio/portfolio-ai-social.mp4' },
-  { tag: 'AI · ENGAGEMENT', name: 'Agentic Player-Support Stack', desc: 'Advisory · Autonomous player support & live ops intelligence.', bg: '#0c1608', video: 'assets/portfolio/portfolio-ai-engagement.mp4' },
-  { tag: 'GAMING · REAL MONEY', name: 'Real Money Gaming', desc: 'Land-based + iGaming · Advisory · Operator intelligence & platforms.', bg: '#0f0a06', video: 'assets/portfolio/portfolio-real-money.mp4' },
-  { tag: 'GAMES · AAA', name: 'Live Service Action RPG', desc: 'Product advisory · Stealth · Pre-launch 2024+', bg: '#0c0c14', video: 'assets/portfolio/portfolio-aaa-rpg.mp4' },
-  { tag: 'GAMES · DIGITAL', name: 'Social & Web3 Gaming', desc: 'Investment + Product advisory · 2024+', bg: '#090f0c', video: 'assets/portfolio/portfolio-web3.mp4' },
-  { tag: 'GAMES · CASUAL', name: 'Hybrid Casual Studio', desc: 'Investment + Prod Strategy · 2024+', bg: '#0b1008', video: 'assets/portfolio/portfolio-casual.mp4' },
+  { tag: 'AI · MULTI-AGENT · NEW 2026', name: 'AI Social Simulator', desc: 'Investment · Stealth · Multi-AI social physics simulation platform.', bg: '#081410', video: '/assets/portfolio/portfolio-ai-social.mp4' },
+  { tag: 'AI · ENGAGEMENT', name: 'Agentic Player-Support Stack', desc: 'Advisory · Autonomous player support & live ops intelligence.', bg: '#0c1608', video: '/assets/portfolio/portfolio-ai-engagement.mp4' },
+  { tag: 'GAMING · REAL MONEY', name: 'Real Money Gaming', desc: 'Land-based + iGaming · Advisory · Operator intelligence & platforms.', bg: '#0f0a06', video: '/assets/portfolio/portfolio-real-money.mp4' },
+  { tag: 'GAMES · AAA', name: 'Live Service Action RPG', desc: 'Product advisory · Stealth · Pre-launch 2024+', bg: '#0c0c14', video: '/assets/portfolio/portfolio-aaa-rpg.mp4' },
+  { tag: 'GAMES · DIGITAL', name: 'Social & Web3 Gaming', desc: 'Investment + Product advisory · 2024+', bg: '#090f0c', video: '/assets/portfolio/portfolio-web3.mp4' },
+  { tag: 'GAMES · CASUAL', name: 'Hybrid Casual Studio', desc: 'Investment + Prod Strategy · 2024+', bg: '#0b1008', video: '/assets/portfolio/portfolio-casual.mp4' },
 ];
 
 export const PRACTICE: PracticeItem[] = [
@@ -126,7 +126,7 @@ export const PCOPY: Record<Mode, PanelCopy[]> = {
   ],
   operator: [
     { h: 'You need an operator. <span class="aword">Here\'s the work.</span>', b: ['Fractional, project, or retainer — sleeves up.', 'Product, game design, live ops, GTM, AI.', 'Senior attention most firms charge fund fees for.'], s: '$400M+ launched · concept → scale' },
-    { h: 'Proof we\'ve <span class="aword">done the work.</span>', b: ['$400M+ launched — concept to scale.', 'Live ops across console, mobile and social.', 'Scars included. Ask about the ones that taught us most.'], s: '$340M active · games · AI · AR' },
+    { h: 'Proof we\'ve <span class="aword">done the work.</span>', b: ['$400M+ launched — concept to scale.', 'Live ops across console, mobile and social.', 'Scars included. Ask about the ones that taught us most.'], s: '$400M+ launched · concept → scale' },
     { h: 'Our operating <span class="aword">thesis.</span>', b: ['People lead. Process delivers. Product proves.', 'See it. Get others to see it. Ship it.', 'Every domain compounds into the next.'], s: 'Three principles · earned not invented' },
     { h: 'Where we\'ve <span class="aword">operated.</span>', b: ['We only work in domains we\'ve shipped in.', 'Not advisors. Operators with skin in it.', 'The portfolio reflects the battle scars.'], s: 'Four domains · all hands-on' },
     { h: 'Six domains. All of them <span class="aword">shipped.</span>', b: ['These aren\'t services — they\'re scars.', 'Pick a domain and we\'ll talk about what we\'ve actually done.', 'No PowerPoint consultants.'], s: '$400M+ across all six · concept → scale' },

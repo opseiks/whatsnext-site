@@ -223,6 +223,17 @@ const ChippyRig = forwardRef<ChippyRef, ChippyRigProps>(
       return () => clearInterval(idleTimerRef.current);
     }, [traveling, stop, resetIdle]);
 
+    // BRIEF-02 Fix 1 diagnostic: log rig CSS top/left when landing on Proof
+    // so we can verify the position adjustment applies as expected.
+    useEffect(() => {
+      if (stop !== 1 || traveling) return;
+      const rig = document.querySelector('.rig') as HTMLElement | null;
+      if (!rig) return;
+      const cs = window.getComputedStyle(rig);
+      // eslint-disable-next-line no-console
+      console.log('[chippy] stop=1 rig top:', cs.top, 'left:', cs.left);
+    }, [stop, traveling]);
+
     const handleCoinClick = () => {
       if (travelingRef.current) return;
       clearInterval(idleTimerRef.current);
