@@ -1,6 +1,6 @@
 import type {
   BillboardStat, ThesisEntry, PortfolioDomain,
-  PracticeItem, EngageStep, BuiltItem, PanelCopy, Mode, Stop
+  PracticeItem, PracticeCard, EngageStep, BuiltItem, PanelCopy, Mode, Stop
 } from './types';
 
 export const STOP_NAMES = ['Hero', 'Proof', 'Thesis', 'Portfolio', 'Practice', 'Engage', 'Built With', 'Connect'];
@@ -82,6 +82,15 @@ export const PRACTICE: PracticeItem[] = [
   { num: '04', name: 'Agentic', em: 'Transformation' },
   { num: '05', name: 'Go-To-Market', em: '& Growth' },
   { num: '06', name: 'Community &', em: 'Creator Stacks' },
+];
+
+export const PRACTICE_OP: PracticeCard[] = [
+  { name: 'Future Impacting Investments', status: 'ACTIVE', proof: 'Operator-led checks from $50K to $2M', detail: 'We only back what we would build ourselves' },
+  { name: 'Corporate Product Strategy', status: 'ACTIVE', proof: 'Led product org through award-winning product launch', detail: 'People, process, product. In that order. Always.' },
+  { name: 'Game Design & Live Ops', status: 'ACTIVE', proof: 'Current soft launch of AI live service product', detail: '$400M+ shipped across console, mobile, and social' },
+  { name: 'Agentic Transformation', status: 'ACTIVE', proof: 'AI-native product systems built and deployed', detail: 'We build the thing, not the deck about the thing' },
+  { name: 'Go-To-Market & Growth', status: 'ACTIVE', proof: 'Launched category-defining products in 3 industries', detail: 'Advertising, games, casino. Each one from scratch.' },
+  { name: 'Community & Creator Stacks', status: 'ACTIVE', proof: 'Pioneered early free-to-play and in-game digital economies', detail: 'Before the terminology existed' },
 ];
 
 export const ENGAGE: Record<'capital' | 'operator', EngageStep[]> = {

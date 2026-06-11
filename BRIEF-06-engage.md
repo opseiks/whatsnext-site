@@ -38,7 +38,7 @@ OPERATOR MODE — "We roll up our sleeves" owns the full space:
 - This card takes the full content width (right of Chippy)
 - Edgy, confident, operator-room treatment
 - The capital card does NOT appear at all
-- Not at reduced opacity. Gone.
+- Not at reduced opacity. Gone. Pitch up calendry link. here
 
 Headline: "We roll up our sleeves."
 Body: "Fractional, project, or retainer. Corporate strategy,
@@ -60,9 +60,7 @@ Both headline and intro are visible in both modes.
 Only the card below switches.
 
 ### Fix 3: Chippy position and panel copy
-Drop the Chippy rig down so it is vertically centered.
-Same size as other corner stops. Width 340px. Chip 132px.
-Add 10% top and 10% bottom padding to the content area.
+Chippy position and size should match his size and position on portfolio page
 
 Chippy panel copy for Engage stop:
 

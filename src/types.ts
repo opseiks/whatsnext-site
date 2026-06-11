@@ -32,6 +32,13 @@ export interface PracticeItem {
   em: string;
 }
 
+export interface PracticeCard {
+  name: string;
+  status: string;
+  proof: string;
+  detail: string;
+}
+
 export interface EngageStep {
   num: string;
   name: string;

@@ -23,7 +23,7 @@ export default function World({ mode, stop, heroPhase, onHeroAdvance, onChipSync
       <ProofStop mode={mode} active={stop === 1} onChipSync={onChipSync} />
       <ThesisStop mode={mode} active={stop === 2} />
       <PortfolioStop />
-      <PracticeStop />
+      <PracticeStop mode={mode} active={stop === 4} />
       <EngageStop mode={mode} />
       <BuiltWithStop />
       <ConnectStop mode={mode} />
