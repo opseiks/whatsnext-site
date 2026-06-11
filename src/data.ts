@@ -1,6 +1,6 @@
 import type {
   BillboardStat, ThesisEntry, PortfolioDomain,
-  PracticeItem, PracticeCard, EngageStep, BuiltItem, PanelCopy, Mode, Stop
+  PracticeItem, PracticeCard, EngageStep, BuiltItem, PanelCopy, PartnerLogo, Mode, Stop
 } from './types';
 
 export const STOP_NAMES = ['Hero', 'Proof', 'Thesis', 'Portfolio', 'Practice', 'Engage', 'Built With', 'Connect'];
@@ -119,6 +119,23 @@ export const PARTNERS = [
   'Respawn Entertainment', 'Nexon', 'Avalanche Studios', 'Aristocrat',
   'Scientific Games', 'WMS Gaming', 'Xbox Game Studios', 'Aruze Gaming Global',
   'Burn Ghost', 'Joingo', 'PlayBeMo', '+ more',
+];
+
+/* Partner logo assets for Built With, mapped to the actual files in
+   /public/assets/partners/. If a file is missing, the UI falls back to
+   the company name as text. */
+export const PARTNER_LOGOS: PartnerLogo[] = [
+  { name: 'WMS Gaming', src: '/assets/partners/wms.png.avif' },
+  { name: 'Scientific Games', src: '/assets/partners/scientificgames.webp.avif' },
+  { name: 'Aristocrat', src: '/assets/partners/ati.avif' },
+  { name: 'Respawn Entertainment', src: '/assets/partners/respawn.webp.avif' },
+  { name: 'Nexon', src: '/assets/partners/nexon.png.avif' },
+  { name: 'Xbox Game Studios', src: '/assets/partners/xbox.webp.avif' },
+  { name: 'Avalanche Studios', src: '/assets/partners/avalanche.webp.avif' },
+  { name: 'Aruze Gaming Global', src: '/assets/partners/Aruze.png.avif' },
+  { name: 'Burn Ghost', src: '/assets/partners/burnghost.webp.avif' },
+  { name: 'Joingo', src: '/assets/partners/joingo.webp.avif' },
+  { name: 'Planet Bingo', src: '/assets/partners/planetbingo.webp.avif' },
 ];
 
 export const PCOPY: Record<Mode, PanelCopy[]> = {

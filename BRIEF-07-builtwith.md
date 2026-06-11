@@ -1,94 +1,147 @@
 # BRIEF-07-BUILTWITH
-## Session brief for Built With section fixes
+## Session brief for Built With section
 ## Read CLAUDE.md and DESIGN.md before starting. Do not commit anything.
+
+---
+
+## Project context
+
+This is the whatsnext.digital React rebuild. The site has 8 stops
+navigated by Chippy, a persistent poker chip character who travels
+between sections. The site has two modes: capital and operator.
+Each mode has different visual language and content framing.
+
+Capital mode: gold accents, premium, editorial, boardroom energy.
+Operator mode: chartreuse accents, edgy, game UI energy.
+
+Built With is stop 06. Chippy is on the right corner at this stop.
 
 ---
 
 ## Current state
 
-Built With section shows a logo grid with placeholder slots.
-Chippy is jammed in the top-right corner.
-Partner list is incomplete and the grid has no visual hierarchy.
+Built With section has a basic logo grid with placeholder slots.
+Chippy is jammed too high against the top-right corner.
+The partner list needs updating.
+The two modes need to be architecturally different experiences,
+not just color swaps.
 
 ---
 
-## Fixes required — work through in order
+## Fix 1: Chippy position
 
-### Fix 1: Chippy position
-Chippy and his panel are jammed at the top-right corner.
-Drop the Chippy rig down by 40% of the viewport height.
-It should feel vertically centered in the right portion of the page.
-Same size as other corner stops. Width 340px. Chip 132px.
-At least 20px clearance from the right edge.
+Chippy is sitting too high on this stop.
+Match the vertical position of the Practice stop (stop 04).
+Same distance from the top as Practice.
+Same clearance from the right edge as Practice: at least 20px.
+Same chip and panel size as Practice.
+Check the CSS for stop 04 and replicate the top value for stop 06.
 
-### Fix 2: Complete partner list
-Update the partner list to include all known partners:
+---
 
-Tier 1 (major exits and flagship engagements):
-- WMS Gaming (acquired by Scientific Games, $1.5B exit)
-- Scientific Games (post-acquisition operations)
-- Aristocrat
+## Fix 2: Partner logo assets
 
-Tier 2 (active and recent engagements):
-- Respawn Entertainment
-- Nexon
-- Xbox Game Studios
-- Avalanche Studios
-- Aruze Gaming Global
-- Burn Ghost
-- Joingo
-- Planet Bingo
-- PlayBeMo
+All 11 logo files live at /public/assets/partners/
+File naming convention: company name lowercased,
+spaces replaced with hyphens, .png extension.
 
-Do NOT invent relationships or engagements not on this list.
-Use these names exactly as written.
+wms-gaming.png
+scientific-games.png
+aristocrat.png
+respawn-entertainment.png
+nexon.png
+xbox-game-studios.png
+avalanche-studios.png
+aruze-gaming-global.png
+burn-ghost.png
+joingo.png
+planet-bingo.png
 
-### Fix 3: Color-coded category system
-The grid should illuminate partners based on category
-and current mode.
+If a logo file does not exist, show the company name as text
+in the appropriate accent color. Never break the layout
+for a missing asset. Graceful fallback always.
 
-Each partner has a primary category: GAMES, CASINO, AI, or PUBLISHER.
+---
 
-In CAPITAL mode:
-Partners with investment or major exit relationships
-glow with gold accent on hover and active state.
-Others are dimmer.
+## Fix 3: Capital mode — boardroom table
 
-In OPERATOR mode:
-Partners with deep operator engagements
-glow with chartreuse accent on hover and active state.
-Others are dimmer.
+A dark premium surface fills the content area below the headline.
+The surface has a very subtle reflection beneath each card,
+like looking down at a polished conference table in a dark room.
 
-WMS Gaming always gets featured treatment in both modes:
-- Larger double-wide slot
-- "$1.5B exit" label visible below the name
-- Brief pulse glow animation on arrival when the stop loads
+11 logo cards arranged in a clean grid on the surface.
+Each card is a flat dark rectangle with a subtle gold border.
+The logo PNG sits centered inside the card with padding.
+No text labels needed. The logos speak for themselves.
 
-### Fix 4: Grid layout
-WMS Gaming takes a featured double-wide slot.
-Other tier 1 partners get standard slots.
-Tier 2 partners get slightly smaller slots.
-All slots have subtle border and dark background.
-Partner name is the primary element until logo images arrive.
-Category tag is a small pill label below the name.
+On hover each card:
+- Lifts slightly with a drop shadow suggesting physical elevation
+- Tilts very slightly toward the viewer with CSS perspective
+- A faint gold glow appears around the border
+- Transition smooth 300ms, premium feel
 
-Logo image naming convention:
-/public/assets/partners/[company-slug].png
+Overall mood: a serious room where serious companies have sat.
+Clean, dark, gold accents. No animation when idle.
+Stillness is the statement.
 
-If image does not exist, show company name as text
-in the appropriate accent color. Graceful fallback always.
+---
+
+## Fix 4: Fix 4: Operator mode — Three.js Dyson ring
+Build a Three.js scene that fills the content area.
+Use React Three Fiber (@react-three/fiber and @react-three/drei).
+If not installed, install them first.
+The camera is fixed at the center looking forward.
+Do NOT move the camera. The ring moves around the camera.
+Create 3 complete sets of all 11 logos, 33 logo instances total.
+Distribute them around a full 360 degree ring.
+Each instance of a logo is placed at a slightly different
+latitude and orbital radius from its other two copies
+so the ring feels like a natural asteroid belt,
+not three obvious identical layers.
+The variation should be subtle. Think Dyson ring not solar system.
+All logos stay within a reasonable band around the equator.
+No logo should be so far away it disappears.
+No logo should be so close it overwhelms the view.
+The ring rotates continuously and slowly.
+At any given moment multiple logos should be visible
+passing through the camera's field of view.
+Each logo is a flat PlaneGeometry card in 3D space.
+Logo PNG is the texture. Cards always face the camera via lookAt.
+Cards scale slightly larger as they pass closest to camera.
+Chartreuse edge glow intensifies as a card approaches.
+Cards further away are slightly smaller and dimmer.
+Ambient particle field of tiny dots suggesting stars or signal noise.
+Background color #09090b matching the site.
+On click a card:
+
+Smoothly pulls toward the camera
+Enlarges to show detail
+Company name appears below in Space Mono chartreuse
+Click again or elsewhere to release back to orbit
+
+Contain the scene within the content area left of Chippy.
+Do not overflow into the Chippy panel area.
+Mood: you are inside the network. These are co-conspirators.
+
+---
+
+## Fix 5: Content area padding
+
+Add 10% top and 10% bottom padding to the content area
+on both modes so the headline and grid breathe properly.
 
 ---
 
 ## Success criteria
 
-- Chippy is vertically centered, not cramped at top
-- All partners from the confirmed list are present
-- WMS Gaming has featured treatment with exit label
-- Grid illuminates by category based on active mode
-- Graceful fallback to text if logo images are missing
-- Feels like a wall of proof, not a generic logo grid
+- Chippy vertical position matches Practice stop exactly
+- Capital mode feels like a premium boardroom surface
+- Operator mode has a working Three.js orbital ring
+- All 11 logos load from /public/assets/partners/
+- Graceful text fallback if any logo is missing
+- Both modes feel architecturally different, not just different colors
+- No layout overflows into Chippy panel area
 
 ---
 
-## Do not commit. Show me what you have when done and I will review.
+## Do not commit. I will review when done.

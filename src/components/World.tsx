@@ -25,7 +25,7 @@ export default function World({ mode, stop, heroPhase, onHeroAdvance, onChipSync
       <PortfolioStop />
       <PracticeStop mode={mode} active={stop === 4} />
       <EngageStop mode={mode} />
-      <BuiltWithStop />
+      <BuiltWithStop mode={mode} active={stop === 6} />
       <ConnectStop mode={mode} />
     </div>
   );

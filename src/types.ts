@@ -51,6 +51,11 @@ export interface BuiltItem {
   hero?: boolean;
 }
 
+export interface PartnerLogo {
+  name: string;
+  src: string;
+}
+
 export interface PanelCopy {
   h: string;
   choices?: boolean;

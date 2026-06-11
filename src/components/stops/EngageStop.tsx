@@ -156,13 +156,23 @@ export default function EngageStop({ mode }: EngageStopProps) {
               </div>
             </div>
           ) : (
-            <article className="eg-cap">
-              <div className="eg-cap-label">AS INVESTORS</div>
-              <h3 className="eg-cap-stmt">We write checks.</h3>
-              <div className="eg-cap-rule" />
-              <div className="eg-cap-check">Angel through Series B. $50K to $2M.</div>
-              <p className="eg-cap-body">We only back what we would build ourselves.</p>
-              <a className="eg-cap-btn" href={CAPITAL_PITCH}>Pitch us</a>
+            <article className="eg-cap-box">
+              <span className="eg-cap-nameplate">AS INVESTORS</span>
+              <div className="eg-cap-square">
+                <div className="eg-cap-sq-label">ANGEL</div>
+                <div className="eg-cap-sq-num">$50K</div>
+                <div className="eg-cap-sq-label">TO</div>
+                <div className="eg-cap-sq-num">$2M</div>
+                <div className="eg-cap-sq-divider" />
+                <div className="eg-cap-sq-range">PRE-SEED &rarr; SERIES B</div>
+              </div>
+              <div className="eg-cap-copy">
+                <div className="eg-cap-copy-top">
+                  <h3 className="eg-cap-stmt">We write checks.</h3>
+                  <p className="eg-cap-conviction">We only back what we would build ourselves.</p>
+                </div>
+                <a className="eg-cap-btn" href={CAPITAL_PITCH}>Pitch us</a>
+              </div>
             </article>
           )}
         </div>
