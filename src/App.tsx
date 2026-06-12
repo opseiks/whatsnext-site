@@ -16,9 +16,11 @@ export default function App() {
   const stopRef = useRef<Stop>(0);
   const travelingRef = useRef(true);
   const heroPhaseRef = useRef<1 | 2>(1);
+  const modeRef = useRef<Mode>('neutral');
 
   useEffect(() => { travelingRef.current = traveling; }, [traveling]);
   useEffect(() => { heroPhaseRef.current = heroPhase; }, [heroPhase]);
+  useEffect(() => { modeRef.current = mode; }, [mode]);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-mode', mode);
@@ -91,10 +93,28 @@ export default function App() {
 
   useEffect(() => {
     const onWheel = (e: WheelEvent) => {
-      if (wheelLockRef.current || travelingRef.current) return;
+      if (wheelLockRef.current) return;
       if (Math.abs(e.deltaY) < 18) return;
+
+      // Phase 1: first downward scroll advances to phase 2
+      if (heroPhaseRef.current === 1 && e.deltaY > 0) {
+        wheelLockRef.current = true;
+        setTimeout(() => { wheelLockRef.current = false; }, 1200);
+        advanceHero();
+        return;
+      }
+
+      if (travelingRef.current) return;
+
       wheelLockRef.current = true;
       setTimeout(() => { wheelLockRef.current = false; }, 1200);
+
+      // Phase 2: downward scroll without mode selection defaults to operator
+      if (heroPhaseRef.current === 2 && stopRef.current === 0 && e.deltaY > 0 && modeRef.current === 'neutral') {
+        handleSetMode('operator');
+        return;
+      }
+
       goToStop((stopRef.current + (e.deltaY > 0 ? 1 : -1)) as Stop);
     };
     const onKey = (e: KeyboardEvent) => {
@@ -108,7 +128,7 @@ export default function App() {
       window.removeEventListener('wheel', onWheel);
       window.removeEventListener('keydown', onKey);
     };
-  }, [goToStop]);
+  }, [goToStop, advanceHero, handleSetMode]);
 
   const fnote = `Stop ${String(stop).padStart(2, '0')} · ${STOP_NAMES[stop].toLowerCase()}`;
 
