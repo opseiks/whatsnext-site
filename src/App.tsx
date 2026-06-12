@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { Mode, Stop, ChippyRef } from './types';
-import { CHIPS, STOP_NAMES, MAX_STOP, BB } from './data';
+import { STOP_NAMES, MAX_STOP } from './data';
 import TopBar from './components/TopBar';
 import World from './components/World';
 import ChippyRig from './components/ChippyRig';
@@ -46,13 +46,7 @@ export default function App() {
     chippyRef.current?.triggerTravel();
 
     setTimeout(() => {
-      const m = document.documentElement.getAttribute('data-mode') as Mode || 'neutral';
-      let face = CHIPS[m === 'neutral' ? 'neutral' : m][0];
-      if (n === 1 && m !== 'neutral') {
-        const bbData = BB[m as 'capital' | 'operator'];
-        if (bbData?.[0]?.chip) face = bbData[0].chip;
-      }
-      chippyRef.current?.setFace(face);
+      chippyRef.current?.setFace('assets/chip-wnd-f.png');
       chippyRef.current?.revealPanel();
       travelingRef.current = false;
       setTraveling(false);

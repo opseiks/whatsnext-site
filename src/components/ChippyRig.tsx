@@ -11,7 +11,7 @@ interface ChippyRigProps {
   onSetMode: (m: 'capital' | 'operator') => void;
 }
 
-const IDLE_STOPS = [0, 2, 3];
+const IDLE_STOPS = [0, 1, 2, 3, 4, 5, 6, 7];
 
 // Base .chip-img filter restated here because the turn-smoothing overlay
 // animates filter and would otherwise wipe it during the flip.
@@ -182,6 +182,10 @@ const ChippyRig = forwardRef<ChippyRef, ChippyRigProps>(
         }
       }
 
+      // Billboard owns the face at Proof; let the count run for bounce/spin
+      // but skip the chip flip so idle and onChipSync don't fight each other.
+      if (stopRef.current === 1) return;
+
       const chips = CHIPS[modeRef.current];
       faceIdxRef.current = (faceIdxRef.current + 1) % chips.length;
       flipChipTo(chips[faceIdxRef.current]);
@@ -285,7 +289,7 @@ const ChippyRig = forwardRef<ChippyRef, ChippyRigProps>(
           panel.style.opacity = '0';
           panel.style.transform = 'scale(0.05)';
         }
-        const endFace = CHIPS[modeRef.current][0];
+        const endFace = 'assets/chip-wnd-f.png';
         // Match triggerTravel: small delay so the chip doesn't pop before moving.
         setTimeout(() => {
           playTravel(endFace);
@@ -312,7 +316,9 @@ const ChippyRig = forwardRef<ChippyRef, ChippyRigProps>(
       },
 
       setFace(src: string) {
-        faceIdxRef.current = 0;
+        const chips = CHIPS[modeRef.current];
+        const idx = chips.indexOf(src);
+        faceIdxRef.current = idx >= 0 ? idx : 0;
         if (chipImgRef.current) chipImgRef.current.src = src;
       },
     }), [playTravel, playArc, flipChipTo]);
