@@ -13,42 +13,93 @@ interface ChippyRigProps {
 
 const IDLE_STOPS = [0, 2, 3];
 
-// Personality bounce: squash on impact, stretch on the overshoot up.
+// Base .chip-img filter restated here because the turn-smoothing overlay
+// animates filter and would otherwise wipe it during the flip.
+const CHIP_FILTER = 'brightness(1.1) contrast(1.03) drop-shadow(0 9px 18px rgba(0,0,0,0.76))';
+
+// Sub-frame smoothing for the 4-frame turn art: between PNG swaps the img
+// squeezes through rotateY (no perspective on the parent, so it reads as
+// pure cos foreshortening, direction-agnostic) with a touch of blur, and
+// the next turn frame takes over exactly at the swap. Turns the discrete
+// frame pops into continuous rotation while keeping the thickness detail
+// baked into the turn art.
+function makeTurnSmoothing(gapCount: number): Keyframe[] {
+  const frames: Keyframe[] = [];
+  for (let g = 0; g < gapCount; g++) {
+    frames.push(
+      { transform: 'rotateY(0deg)', filter: CHIP_FILTER, offset: g / gapCount, easing: 'ease-in' },
+      { transform: 'rotateY(-46deg)', filter: `${CHIP_FILTER} blur(1.4px)`, offset: (g + 1) / gapCount - 0.001 },
+    );
+  }
+  frames.push({ transform: 'rotateY(0deg)', filter: CHIP_FILTER, offset: 1 });
+  return frames;
+}
+
+// Idle flips step the turn frames faster than travel: short gaps read as
+// momentum and let the smoothing overlay carry the in-betweens.
+const FLIP_FRAME_MS = 95;
+
+// Cartoon jump: deep anticipation squash into the ground, launch with a
+// stretch, back to a perfect circle hanging at the apex, stretch again on
+// the fall, then a hard boing squash on landing with a rebound hop and a
+// smaller second squish before settling. translateY during the squashes
+// keeps the bottom edge planted so he compresses against the ground rather
+// than shrinking in place.
 const PERSONALITY_BOUNCE_KEYFRAMES: Keyframe[] = [
-  { transform: 'translateY(0) scaleY(1) rotateX(7deg) rotateZ(-2deg)', easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' },
-  { transform: 'translateY(50px) scaleY(0.85) rotateX(2deg) rotateZ(-6deg)', offset: 0.5, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)' },
-  { transform: 'translateY(-40px) scaleY(1.15) rotateX(14deg) rotateZ(4deg)', offset: 0.75, easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' },
-  { transform: 'translateY(0) scaleY(1) rotateX(7deg) rotateZ(-2deg)' },
+  // Rest
+  { transform: 'translateY(0) scaleX(1) scaleY(1) rotateX(7deg) rotateZ(-2deg)', easing: 'cubic-bezier(0.45, 0, 0.6, 1)' },
+  // Anticipation: exaggerated push down, squishing wide
+  { transform: 'translateY(24px) scaleX(1.22) scaleY(0.7) rotateX(7deg) rotateZ(-2deg)', offset: 0.16, easing: 'linear' },
+  // Beat at the bottom of the squash
+  { transform: 'translateY(24px) scaleX(1.22) scaleY(0.7) rotateX(7deg) rotateZ(-2deg)', offset: 0.21, easing: 'cubic-bezier(0.2, 0.9, 0.35, 1)' },
+  // Launch: elongates on the way up
+  { transform: 'translateY(-92px) scaleX(0.86) scaleY(1.26) rotateX(7deg) rotateZ(-2deg)', offset: 0.38, easing: 'ease-out' },
+  // Apex: back to a circle, hanging for a moment
+  { transform: 'translateY(-108px) scaleX(1) scaleY(1) rotateX(7deg) rotateZ(-2deg)', offset: 0.48, easing: 'cubic-bezier(0.55, 0, 0.85, 0.55)' },
+  // Falling: stretches toward the ground
+  { transform: 'translateY(-12px) scaleX(0.92) scaleY(1.14) rotateX(7deg) rotateZ(-2deg)', offset: 0.6, easing: 'cubic-bezier(0.6, 0, 0.9, 0.6)' },
+  // Impact: boing, squashed hard against the ground
+  { transform: 'translateY(30px) scaleX(1.34) scaleY(0.58) rotateX(7deg) rotateZ(-2deg)', offset: 0.66, easing: 'cubic-bezier(0.2, 0.9, 0.3, 1.3)' },
+  // Rebound hop
+  { transform: 'translateY(-26px) scaleX(0.95) scaleY(1.1) rotateX(7deg) rotateZ(-2deg)', offset: 0.77, easing: 'cubic-bezier(0.5, 0, 0.8, 0.6)' },
+  // Second, smaller squish
+  { transform: 'translateY(11px) scaleX(1.14) scaleY(0.86) rotateX(7deg) rotateZ(-2deg)', offset: 0.85, easing: 'cubic-bezier(0.3, 0.9, 0.4, 1)' },
+  // Settle wobble
+  { transform: 'translateY(-5px) scaleX(0.98) scaleY(1.04) rotateX(7deg) rotateZ(-2deg)', offset: 0.92, easing: 'ease-in-out' },
+  { transform: 'translateY(0) scaleX(1) scaleY(1) rotateX(7deg) rotateZ(-2deg)' },
 ];
 
-// Spin idle: small wiggle (¼ turn left, back, ¼ turn right), bigger swing
-// to 40% left, spring back through upright the long way around to ¼ past
-// upright on the right ("missed his stop"), pause ~1s, snap back, then
-// damped wobble to rest. rotateX(7deg) baseline preserved throughout so
-// the perspective tilt doesn't pop.
+// Wheel spin idle: pendulum swings that build energy (left, right, bigger
+// left, biggest right), then release into a couple of full in-plane
+// revolutions that decelerate, overshoot slightly past upright, teeter at
+// the top, and rock to a stop. All rotateZ so the face never leaves the
+// camera; -722deg end value is one full lap short of -2deg, i.e. the rest
+// pose. rotateX(7deg) baseline preserved so the perspective tilt doesn't pop.
 const SPIN_IDLE_KEYFRAMES: Keyframe[] = [
-  // 0ms — rest
+  // Rest
   { transform: 'translateY(0) rotateX(7deg) rotateZ(-2deg)', easing: 'cubic-bezier(0.45,0.05,0.55,0.95)' },
-  // 600ms — ¼ turn left
-  { transform: 'translateY(0) rotateX(7deg) rotateZ(-90deg)', offset: 0.109, easing: 'cubic-bezier(0.45,0.05,0.55,0.95)' },
-  // 1000ms — back to upright
-  { transform: 'translateY(0) rotateX(7deg) rotateZ(0deg)', offset: 0.182, easing: 'cubic-bezier(0.45,0.05,0.55,0.95)' },
-  // 1400ms — continue to ¼ turn right
-  { transform: 'translateY(0) rotateX(7deg) rotateZ(90deg)', offset: 0.255, easing: 'cubic-bezier(0.45,0,0.55,1)' },
-  // 2300ms — bigger swing to 40% left
-  { transform: 'translateY(0) rotateX(7deg) rotateZ(-144deg)', offset: 0.418, easing: 'cubic-bezier(0.22,1,0.36,1)' },
-  // 3100ms — spring through upright the long way around to +90° (overshoots his stop)
-  { transform: 'translateY(0) rotateX(7deg) rotateZ(90deg)', offset: 0.564, easing: 'linear' },
-  // 4100ms — hold for ~1s
-  { transform: 'translateY(0) rotateX(7deg) rotateZ(90deg)', offset: 0.745, easing: 'cubic-bezier(0.4,0,0.2,1)' },
-  // 4500ms — snap back past upright (overshoot to -10°)
-  { transform: 'translateY(0) rotateX(7deg) rotateZ(-10deg)', offset: 0.818, easing: 'ease-in-out' },
-  // Damped wobble settle: +6° → -4° → +2° → -1° → rest
-  { transform: 'translateY(0) rotateX(7deg) rotateZ(6deg)', offset: 0.854, easing: 'ease-in-out' },
-  { transform: 'translateY(0) rotateX(7deg) rotateZ(-4deg)', offset: 0.890, easing: 'ease-in-out' },
-  { transform: 'translateY(0) rotateX(7deg) rotateZ(2deg)', offset: 0.927, easing: 'ease-in-out' },
-  { transform: 'translateY(0) rotateX(7deg) rotateZ(-1deg)', offset: 0.963, easing: 'ease-in-out' },
-  { transform: 'translateY(0) rotateX(7deg) rotateZ(-2deg)' },
+  // Swing left
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(-38deg)', offset: 0.08, easing: 'cubic-bezier(0.45,0.05,0.55,0.95)' },
+  // Swing right, a little further
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(60deg)', offset: 0.18, easing: 'cubic-bezier(0.45,0.05,0.55,0.95)' },
+  // Bigger swing left
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(-95deg)', offset: 0.29, easing: 'cubic-bezier(0.45,0.05,0.55,0.95)' },
+  // Full windup right
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(130deg)', offset: 0.4, easing: 'cubic-bezier(0.6, 0, 0.8, 0.4)' },
+  // Release: first fast revolution
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(-260deg)', offset: 0.5, easing: 'linear' },
+  // Second revolution, starting to slow
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(-560deg)', offset: 0.62, easing: 'cubic-bezier(0.3, 0.4, 0.6, 0.8)' },
+  // Coasting toward upright
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(-686deg)', offset: 0.74, easing: 'cubic-bezier(0.25, 0.6, 0.5, 1)' },
+  // Overshoot past the top and teeter
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(-737deg)', offset: 0.84, easing: 'cubic-bezier(0.4, 0, 0.3, 1)' },
+  // Rock back over the top
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(-713deg)', offset: 0.91, easing: 'ease-in-out' },
+  // Small counter-rock
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(-726deg)', offset: 0.96, easing: 'ease-in-out' },
+  // Settle at rest (one lap below -2deg)
+  { transform: 'translateY(0) rotateX(7deg) rotateZ(-722deg)' },
 ];
 
 const ChippyRig = forwardRef<ChippyRef, ChippyRigProps>(
@@ -82,7 +133,9 @@ const ChippyRig = forwardRef<ChippyRef, ChippyRigProps>(
       if (chipImgRef.current) chipImgRef.current.src = CHIPS[mode][0];
     }, [mode]);
 
-    // Full 360 turn-sequence flip: currentFace → t1 → t2 → t3 → newFace
+    // Full 360 turn-sequence flip: currentFace → t1 → t2 → t3 → newFace,
+    // with a continuous squeeze-and-blur overlay filling the gaps between
+    // frame swaps so the rotation reads fluid instead of stepped.
     const flipChipTo = useCallback((newSrc: string) => {
       if (idleFlippingRef.current || travelingRef.current) return;
       const el = chipImgRef.current;
@@ -90,42 +143,48 @@ const ChippyRig = forwardRef<ChippyRef, ChippyRigProps>(
       idleFlippingRef.current = true;
 
       const frames = [TURNS[1], TURNS[2], TURNS[3], newSrc];
+      el.animate(makeTurnSmoothing(frames.length), { duration: FLIP_FRAME_MS * frames.length });
       let i = 0;
       const step = () => {
         el.src = frames[i++];
         if (i < frames.length) {
-          setTimeout(step, 150);
+          setTimeout(step, FLIP_FRAME_MS);
         } else {
           idleFlippingRef.current = false;
         }
       };
-      setTimeout(step, 150);
+      setTimeout(step, FLIP_FRAME_MS);
     }, []);
 
     const doFlip = useCallback(() => {
       if (idleFlippingRef.current || travelingRef.current || specialIdleRef.current) return;
-      const chips = CHIPS[modeRef.current];
-      faceIdxRef.current = (faceIdxRef.current + 1) % chips.length;
-      flipChipTo(chips[faceIdxRef.current]);
 
       idleCountRef.current++;
       if (idleCountRef.current >= 4) {
         idleCountRef.current = 0;
         const bobEl = coinBobRef.current;
         if (bobEl) {
+          // Special-idle cycles skip the turn-frame face flip entirely: the
+          // PNG turn sequence reads as a sideways pivot that fights the
+          // in-plane jump/wheel-spin motion.
           const useSpin = idleBehaviorRef.current === 1;
           idleBehaviorRef.current = useSpin ? 0 : 1;
           specialIdleRef.current = true;
           bobEl.style.animationPlayState = 'paused';
           const anim = useSpin
-            ? bobEl.animate(SPIN_IDLE_KEYFRAMES, { duration: 5500 })
-            : bobEl.animate(PERSONALITY_BOUNCE_KEYFRAMES, { duration: 1600 });
+            ? bobEl.animate(SPIN_IDLE_KEYFRAMES, { duration: 6500 })
+            : bobEl.animate(PERSONALITY_BOUNCE_KEYFRAMES, { duration: 2300 });
           anim.onfinish = () => {
             bobEl.style.animationPlayState = '';
             specialIdleRef.current = false;
           };
+          return;
         }
       }
+
+      const chips = CHIPS[modeRef.current];
+      faceIdxRef.current = (faceIdxRef.current + 1) % chips.length;
+      flipChipTo(chips[faceIdxRef.current]);
     }, [flipChipTo]);
 
     const resetIdle = useCallback(() => {
@@ -133,13 +192,15 @@ const ChippyRig = forwardRef<ChippyRef, ChippyRigProps>(
       idleTimerRef.current = setInterval(doFlip, 4200);
     }, [doFlip]);
 
-    // Travel: 4-frame face turn sequence + forward tilt arc
+    // Travel: 4-frame face turn sequence + forward tilt arc. Same smoothing
+    // overlay as idle flips, at travel's 150ms cadence (4 gaps over 600ms).
     const playTravel = useCallback((endFace?: string) => {
       const face = endFace || TURNS[0];
       const frames = [TURNS[0], TURNS[1], TURNS[2], TURNS[3], face];
       let i = 0;
       const el = chipImgRef.current;
       if (!el) return;
+      el.animate(makeTurnSmoothing(frames.length - 1), { duration: 150 * (frames.length - 1) });
       const step = () => {
         el.src = frames[i++];
         if (i < frames.length) setTimeout(step, 150);
