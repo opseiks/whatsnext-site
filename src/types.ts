@@ -1,4 +1,5 @@
 export type Mode = 'neutral' | 'capital' | 'operator';
+export type LayoutMode = 'cinematic' | 'scroll';
 export type Stop = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 export interface BillboardStat {
