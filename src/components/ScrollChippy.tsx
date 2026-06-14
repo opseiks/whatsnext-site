@@ -42,16 +42,18 @@ export default function ScrollChippy({ mode, onSetMode }: ScrollChippyProps) {
 
     const obs = new IntersectionObserver(
       (entries) => {
-        let best: { idx: number; ratio: number } | null = null;
-        entries.forEach((entry) => {
+        let bestIdx = -1;
+        let bestRatio = 0;
+        for (const entry of entries) {
           if (entry.isIntersecting) {
             const idx = Array.from(stops).indexOf(entry.target as Element);
-            if (idx >= 0 && (!best || entry.intersectionRatio > best.ratio)) {
-              best = { idx, ratio: entry.intersectionRatio };
+            if (idx >= 0 && entry.intersectionRatio > bestRatio) {
+              bestIdx = idx;
+              bestRatio = entry.intersectionRatio;
             }
           }
-        });
-        if (best) setCurrentSection(best.idx);
+        }
+        if (bestIdx >= 0) setCurrentSection(bestIdx);
       },
       { threshold: [0.2, 0.4, 0.6, 0.8] },
     );
@@ -60,9 +62,11 @@ export default function ScrollChippy({ mode, onSetMode }: ScrollChippyProps) {
     return () => obs.disconnect();
   }, []);
 
-  // Corner chip enter animation when hero scrolls away
+  // Corner chip enter animation when hero scrolls away.
+  // If mode is still neutral (visitor scrolled without choosing), default to operator.
   useEffect(() => {
     if (wasHeroVisibleRef.current && !heroVisible) {
+      if (mode === 'neutral') onSetMode('operator');
       setEntering(true);
       const t = setTimeout(() => setEntering(false), 600);
       wasHeroVisibleRef.current = false;
@@ -72,7 +76,7 @@ export default function ScrollChippy({ mode, onSetMode }: ScrollChippyProps) {
       wasHeroVisibleRef.current = true;
       setEntering(false);
     }
-  }, [heroVisible]);
+  }, [heroVisible, mode, onSetMode]);
 
   // Pulse + exclaim on section change (corner chip only)
   useEffect(() => {

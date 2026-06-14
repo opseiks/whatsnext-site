@@ -1337,7 +1337,7 @@ h1 .it {
   flex: 0 1 calc(33.333% - 16px);
 }
 [data-layout='scroll'] .bw-stage {
-  min-height: 60vh; flex: none;
+  width: 100%; height: 80vh; aspect-ratio: unset; flex: none;
 }
 
 /* ── Fix 11: Connect full width, full viewport, footer visible ── */

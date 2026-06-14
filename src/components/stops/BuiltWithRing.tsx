@@ -3,14 +3,14 @@ import * as THREE from 'three';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import { PARTNER_LOGOS } from '../../data';
+import { ORBITAL_CAMERA } from '../../config/orbital-camera';
 
 const SETS = 3;
 const COUNT = SETS * PARTNER_LOGOS.length;
 const RING_RADIUS = 7;
 /* Used to normalize distance-based dimming in LogoCard. */
 const RADIUS_VAR = 4.5;
-/* Drops the whole belt slightly below the camera's horizon. */
-const BAND_OFFSET = -0.35;
+const BAND_OFFSET = ORBITAL_CAMERA.desktop.y;
 /* Hand-tuned placement per logo slot (PARTNER_LOGOS order), applied to all
    three sets so the belt reads symmetrical. lat is a fraction of the card's
    radius (keeps every card inside the 60deg fov); rad offsets RING_RADIUS;
@@ -360,9 +360,9 @@ function CameraRig() {
   useEffect(() => {
     const update = () => {
       const w = window.innerWidth;
-      if (w < 480) targetZ.current = 4.5;
-      else if (w < 768) targetZ.current = 3.2;
-      else targetZ.current = 1.8;
+      if (w < 480) targetZ.current = ORBITAL_CAMERA.mobile.z;
+      else if (w < 768) targetZ.current = ORBITAL_CAMERA.tablet.z;
+      else targetZ.current = ORBITAL_CAMERA.desktop.z;
     };
     update();
     window.addEventListener('resize', update);
@@ -371,8 +371,10 @@ function CameraRig() {
 
   useFrame((state, delta) => {
     const cam = state.camera;
+    cam.position.x = ORBITAL_CAMERA.desktop.x;
+    cam.position.y = BAND_OFFSET;
     cam.position.z += (targetZ.current - cam.position.z) * Math.min(1, delta * 3);
-    cam.lookAt(0, BAND_OFFSET, 0);
+    cam.lookAt(ORBITAL_CAMERA.lookAt.x, ORBITAL_CAMERA.lookAt.y, ORBITAL_CAMERA.lookAt.z);
   });
 
   return null;
@@ -384,8 +386,9 @@ export default function BuiltWithRing({ active }: { active: boolean }) {
   return (
     <Canvas
       frameloop={active ? 'always' : 'never'}
-      camera={{ position: [0, 0, 1.8], fov: 60, near: 0.1, far: 60 }}
+      camera={{ position: [ORBITAL_CAMERA.desktop.x, BAND_OFFSET, ORBITAL_CAMERA.desktop.z], fov: ORBITAL_CAMERA.fov, near: 0.1, far: 60 }}
       gl={{ antialias: true, alpha: false }}
+      style={{ width: '100%', height: '100%' }}
       onPointerMissed={() => setSelected(null)}
     >
       <color attach="background" args={['#09090b']} />

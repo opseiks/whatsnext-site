@@ -73,12 +73,10 @@ export default function App() {
     document.documentElement.setAttribute('data-layout', layoutMode);
   }, [layoutMode]);
 
-  // Scroll mode defaults to operator. No neutral state in scroll mode.
-  useEffect(() => {
-    if (layoutMode === 'scroll' && mode === 'neutral') {
-      setModeState('operator');
-    }
-  }, [layoutMode, mode]);
+  // Operator default is handled by ScrollChippy when the hero scrolls away
+  // without a selection. Do NOT eagerly set operator here — it races with
+  // the useLayoutEffect that upgrades SSR 'scroll' to 'cinematic' and kills
+  // the neutral hero question in cinematic mode.
 
   const setMode = useCallback((m: 'capital' | 'operator') => {
     setModeState(m);
