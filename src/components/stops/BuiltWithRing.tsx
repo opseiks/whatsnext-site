@@ -354,17 +354,42 @@ function Particles() {
   );
 }
 
+function CameraRig() {
+  const targetZ = useRef(0);
+
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      if (w < 480) targetZ.current = 4.5;
+      else if (w < 768) targetZ.current = 3.2;
+      else targetZ.current = 1.8;
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  useFrame((state, delta) => {
+    const cam = state.camera;
+    cam.position.z += (targetZ.current - cam.position.z) * Math.min(1, delta * 3);
+    cam.lookAt(0, BAND_OFFSET, 0);
+  });
+
+  return null;
+}
+
 export default function BuiltWithRing({ active }: { active: boolean }) {
   const [selected, setSelected] = useState<number | null>(null);
 
   return (
     <Canvas
       frameloop={active ? 'always' : 'never'}
-      camera={{ position: [0, 0, 0], fov: 60, near: 0.1, far: 60 }}
+      camera={{ position: [0, 0, 1.8], fov: 60, near: 0.1, far: 60 }}
       gl={{ antialias: true, alpha: false }}
       onPointerMissed={() => setSelected(null)}
     >
       <color attach="background" args={['#09090b']} />
+      <CameraRig />
       <Particles />
       <Ring selected={selected} onSelect={setSelected} />
     </Canvas>

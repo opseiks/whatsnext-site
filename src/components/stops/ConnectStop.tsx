@@ -66,13 +66,17 @@ export default function ConnectStop({ mode }: ConnectStopProps) {
       </div>
 
       <footer className="cn-footer">
-        <span>© 2026 What's Next Digital · Los Angeles, CA</span>
-        <nav className="cn-foot-social">
-          {SOCIALS.map(s => (
-            <a key={s.name} href={s.href} target="_blank" rel="noreferrer">{s.name}</a>
-          ))}
-        </nav>
-        <a className="cn-foot-right" href="mailto:info@whatsnext.digital">info@whatsnext.digital</a>
+        <div className="cn-foot-row1">
+          <nav className="cn-foot-social">
+            {SOCIALS.map(s => (
+              <a key={s.name} href={s.href} target="_blank" rel="noreferrer">{s.name}</a>
+            ))}
+          </nav>
+          <a className="cn-foot-email" href="mailto:info@whatsnext.digital">info@whatsnext.digital</a>
+        </div>
+        <div className="cn-foot-row2">
+          <span>&copy; 2026 What's Next Digital &middot; Los Angeles &middot; New York City &middot; Boca Raton</span>
+        </div>
       </footer>
     </section>
   );

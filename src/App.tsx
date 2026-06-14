@@ -20,6 +20,7 @@ export default function App() {
   const [stop, setStopState] = useState<Stop>(0);
   const [traveling, setTraveling] = useState(true);
   const [heroPhase, setHeroPhase] = useState<1 | 2>(1);
+  const [scrollModeChosen, setScrollModeChosen] = useState(false);
   const chippyRef = useRef<ChippyRef>(null);
   const wheelLockRef = useRef(false);
   const stopRef = useRef<Stop>(0);
@@ -171,9 +172,9 @@ export default function App() {
     };
   }, [layoutMode, goToStop, advanceHero, handleSetMode]);
 
-  // Scroll mode: mode selection handler that doesn't drive cinematic navigation
   const handleScrollSetMode = useCallback((m: 'capital' | 'operator') => {
     setModeState(m);
+    setScrollModeChosen(true);
   }, []);
 
   if (layoutMode === 'scroll') {
@@ -191,6 +192,7 @@ export default function App() {
 
         <ScrollWorld
           mode={mode}
+          modeChosen={scrollModeChosen}
           onSetMode={handleScrollSetMode}
           onChipSync={() => {}}
         />

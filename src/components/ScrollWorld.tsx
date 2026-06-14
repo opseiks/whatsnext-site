@@ -10,16 +10,17 @@ import ConnectStop from './stops/ConnectStop';
 
 interface ScrollWorldProps {
   mode: Mode;
+  modeChosen: boolean;
   onSetMode: (m: 'capital' | 'operator') => void;
   onChipSync: (src: string) => void;
 }
 
-export default function ScrollWorld({ mode, onSetMode, onChipSync }: ScrollWorldProps) {
+export default function ScrollWorld({ mode, modeChosen, onSetMode, onChipSync }: ScrollWorldProps) {
   return (
     <div className="world">
-      <ScrollHeroStop onSetMode={onSetMode} />
+      <ScrollHeroStop onSetMode={onSetMode} modeChosen={modeChosen} />
       <ProofStop mode={mode} active={true} onChipSync={onChipSync} />
-      <ThesisStop mode={mode} active={true} />
+      <ThesisStop mode={mode} active={true} layout="scroll" />
       <PortfolioStop />
       <PracticeStop mode={mode} active={true} />
       <EngageStop mode={mode} />
