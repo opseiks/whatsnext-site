@@ -38,20 +38,32 @@ export default function App() {
     if (typeof window === 'undefined') return;
     if (isBot()) return;
 
+    if (window.innerWidth < MOBILE_BREAKPOINT) {
+      setLayoutMode('scroll');
+      return;
+    }
     const stored = localStorage.getItem(LAYOUT_STORAGE_KEY) as LayoutMode | null;
     if (stored === 'scroll' || stored === 'cinematic') {
       setLayoutMode(stored);
       return;
     }
-    if (window.innerWidth >= MOBILE_BREAKPOINT) {
-      setLayoutMode('cinematic');
-    }
+    setLayoutMode('cinematic');
   }, []);
 
-  // Downsize only: auto-switch to scroll below 768px, never back to cinematic.
+  // Below 768px: always scroll, ignore localStorage.
+  // At or above 768px: restore localStorage preference if set.
   useEffect(() => {
     const onResize = () => {
-      if (window.innerWidth < MOBILE_BREAKPOINT) setLayoutMode('scroll');
+      if (window.innerWidth < MOBILE_BREAKPOINT) {
+        setLayoutMode('scroll');
+      } else {
+        const stored = localStorage.getItem(LAYOUT_STORAGE_KEY) as LayoutMode | null;
+        if (stored === 'scroll' || stored === 'cinematic') {
+          setLayoutMode(stored);
+        } else {
+          setLayoutMode('cinematic');
+        }
+      }
     };
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);

@@ -34,7 +34,7 @@ export default function HeroStop({ heroPhase, onAdvance }: HeroStopProps) {
           The <span className="it">future</span> isn't waiting for permission.
         </h1>
         <p className="hero-l3" style={{ opacity: l3Vis ? 1 : 0 }}>
-          We bet on the people building <span className="hero-wn">what's next.</span>
+          We bet on the people<br />building <span className="hero-wn">what's next.</span>
         </p>
       </div>
     </section>

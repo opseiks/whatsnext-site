@@ -69,7 +69,7 @@ export default function ScrollHeroStop({ onSetMode, modeChosen }: ScrollHeroStop
           The <span className="it">future</span> isn't waiting for permission.
         </h1>
         <p className="sh-subhead">
-          We bet on the people building <span className="sh-wn">what's next.</span>
+          We bet on the people<br />building <span className="sh-wn">what's next.</span>
         </p>
       </div>
 
