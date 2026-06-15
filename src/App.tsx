@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
+import Clarity from '@microsoft/clarity';
 import type { Mode, LayoutMode, Stop, ChippyRef } from './types';
 import { STOP_NAMES, MAX_STOP } from './data';
 import { isBot } from './utils/bot';
@@ -72,6 +73,25 @@ export default function App() {
   useEffect(() => {
     document.documentElement.setAttribute('data-layout', layoutMode);
   }, [layoutMode]);
+
+  useEffect(() => {
+    Clarity.init('x7j7xnmf7o');
+
+    const script = document.createElement('script');
+    script.src = 'https://www.googletagmanager.com/gtag/js?id=G-BFRW2EBQNK';
+    script.async = true;
+    document.head.appendChild(script);
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag(...args: any[]) { window.dataLayer.push(args); }
+    gtag('js', new Date());
+    gtag('config', 'G-BFRW2EBQNK');
+  }, []);
+
+  useEffect(() => {
+    Clarity.setTag('current_url', window.location.href);
+    Clarity.event('virtual_page_view');
+  }, [stop]);
 
   // Operator default is handled by ScrollChippy when the hero scrolls away
   // without a selection. Do NOT eagerly set operator here — it races with

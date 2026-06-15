@@ -1233,6 +1233,22 @@ h1 .it {
   padding: 76px 40px 40px;
 }
 
+/* ── Fix: Proof queue tiles responsive in scroll mode ── */
+[data-layout='scroll'] .bb-queue {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+  width: 100%; max-width: 100%; overflow: hidden; box-sizing: border-box;
+}
+[data-layout='scroll'] .bb-tile {
+  box-sizing: border-box; width: 100%; overflow: hidden; min-width: 0;
+}
+[data-layout='scroll'] .tv { font-size: clamp(14px, 4vw, 24px) !important; }
+[data-layout='scroll'] .tl { font-size: clamp(10px, 2.5vw, 14px) !important; }
+@media (min-width: 768px) {
+  [data-layout='scroll'] .bb-queue {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 /* ── Fix 6: Thesis full width ── */
 [data-layout='scroll'] .thesis-full {
   position: relative; top: auto; bottom: auto;
