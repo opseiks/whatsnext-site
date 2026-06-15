@@ -155,13 +155,13 @@ body {
   font-family: 'Space Mono', monospace; font-size: 11px;
   text-transform: uppercase; letter-spacing: 0.18em;
   color: var(--muted); margin-bottom: 20px;
-  text-shadow: 0 2px 40px rgba(0,0,0,0.8), 0 0 80px rgba(0,0,0,0.5);
+  text-shadow: 0 2px 40px rgba(0,0,0,0.95), 0 0 80px rgba(0,0,0,0.7);
   transition: opacity 0.8s ease;
 }
 .hero-l2 {
   font-weight: 900; line-height: 0.91; letter-spacing: -0.025em;
   font-size: clamp(52px, 7.8vw, 128px); text-wrap: unset;
-  text-shadow: 0 2px 40px rgba(0,0,0,0.8), 0 0 80px rgba(0,0,0,0.5);
+  text-shadow: 0 2px 40px rgba(0,0,0,0.95), 0 0 80px rgba(0,0,0,0.7);
   transition: opacity 0.8s ease;
 }
 .hero-l3 {
@@ -169,7 +169,7 @@ body {
   font-size: clamp(24px, 2.7vw, 41px);
   line-height: 1.5; color: var(--muted); margin-top: 48px;
   text-transform: uppercase; letter-spacing: 0.1em;
-  text-shadow: 0 2px 40px rgba(0,0,0,0.8), 0 0 80px rgba(0,0,0,0.5);
+  text-shadow: 0 2px 40px rgba(0,0,0,0.95), 0 0 80px rgba(0,0,0,0.7);
   transition: opacity 0.8s ease;
 }
 .hero-l3 .hero-wn {
@@ -1383,18 +1383,18 @@ h1 .it {
   display: flex; flex-direction: column;
 }
 .sh-copy .hero-l1 {
-  text-shadow: 0 2px 40px rgba(0,0,0,0.9), 0 0 80px rgba(0,0,0,0.6);
+  text-shadow: 0 2px 40px rgba(0,0,0,0.95), 0 0 80px rgba(0,0,0,0.7);
 }
 .sh-copy .hero-l2 {
   font-size: clamp(32px, 6vw, 88px);
-  text-shadow: 0 2px 40px rgba(0,0,0,0.9), 0 0 80px rgba(0,0,0,0.6);
+  text-shadow: 0 2px 40px rgba(0,0,0,0.95), 0 0 80px rgba(0,0,0,0.7);
 }
 .sh-subhead {
   font-family: 'Space Mono', monospace; font-weight: 400;
   font-size: clamp(16px, 2vw, 28px);
   line-height: 1.5; color: var(--muted); margin-top: clamp(20px, 3vh, 40px);
   text-transform: uppercase; letter-spacing: 0.1em;
-  text-shadow: 0 2px 40px rgba(0,0,0,0.9), 0 0 80px rgba(0,0,0,0.6);
+  text-shadow: 0 2px 40px rgba(0,0,0,0.95), 0 0 80px rgba(0,0,0,0.7);
 }
 .sh-wn {
   font-family: 'Space Mono', monospace; font-style: normal; font-weight: 400;

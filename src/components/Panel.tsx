@@ -36,7 +36,7 @@ export default function Panel({ mode, stop, onSetMode, onAsk }: PanelProps) {
           </button>
           <button className="choice" onClick={() => onSetMode('operator')}>
             <span>
-              <span className="ct">I need an operator partner</span>
+              <span className="ct">I need a product and operator partner</span>
               <span className="cs">Fractional · project · retainer</span>
             </span>
             <span className="arw">→</span>

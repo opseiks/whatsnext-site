@@ -101,7 +101,7 @@ export default function ScrollHeroStop({ onSetMode, modeChosen }: ScrollHeroStop
             </button>
             <button className="sh-choice" onClick={() => handleSelect('operator')}>
               <span className="sh-choice-inner">
-                <span className="sh-choice-title">I need an operator partner</span>
+                <span className="sh-choice-title">I need a product and operator partner</span>
                 <span className="sh-choice-sub">Fractional · project · retainer</span>
               </span>
               <span className="sh-choice-arrow">→</span>
