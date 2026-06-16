@@ -49,7 +49,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     if (!response.ok) throw new Error('Anthropic API error');
-    const data = await response.json();
+    const data = await response.json() as { content: Array<{ text: string }> };
     return res.status(200).json({ answer: data.content[0].text });
   } catch {
     return res.status(500).json({
