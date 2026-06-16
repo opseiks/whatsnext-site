@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import type { Mode, Stop } from '../types';
-import { PCOPY, PANEL_TAGS, STOP_NAMES } from '../data';
+import { PCOPY, PANEL_TAGS } from '../data';
 import { askChippy } from '../utils/chippy-chat';
 
 interface ChatMessage {
@@ -37,11 +37,7 @@ export default function Panel({ mode, stop, onSetMode, onAsk }: PanelProps) {
     setLoading(true);
     onAsk();
 
-    const sectionName = STOP_NAMES[stop] ?? 'the site';
-    const modeLabel = mode === 'capital' ? 'investor/capital' : 'operator/partner';
-    const systemPrompt = `You are Chippy, the guide for whatsnext.digital, an operator-led investment and advisory firm. The visitor is currently on the "${sectionName}" section in ${modeLabel} mode. Keep answers concise (2-3 sentences max). Be direct, confident, and knowledgeable. Never invent numbers or stats. If you do not know something, say so and suggest they email info@whatsnext.digital.`;
-
-    const response = await askChippy(text, systemPrompt);
+    const response = await askChippy(text, mode, stop);
     setMessages(prev => [...prev, { role: 'chippy', text: response }]);
     setLoading(false);
   }, [input, loading, onAsk, stop, mode]);
