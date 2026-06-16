@@ -774,7 +774,7 @@ h1 .it {
   padding: clamp(28px, 3.2vw, 40px);
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - 300px);
+  height: auto;
   overflow: visible;
 }
 .eg-op-nameplate {
@@ -1745,17 +1745,19 @@ h1 .it {
     grid-template-rows: repeat(6, minmax(160px, 1fr));
   }
   [data-layout='scroll'] .pr-grid { grid-template-columns: 1fr; }
-  [data-layout='scroll'] .eg-op-icons { grid-template-columns: repeat(4, 1fr); gap: 8px; overflow: hidden; }
-  [data-layout='scroll'] .eg-op-icon-glyph svg { width: 28px; height: 28px; max-width: 28px; }
-  [data-layout='scroll'] .eg-op-icon-label { font-size: 8px; word-break: break-word; }
+  [data-layout='scroll'] .eg-op-icons { grid-template-columns: repeat(2, 1fr); gap: 10px; overflow: hidden; }
+  [data-layout='scroll'] .eg-op-icon-glyph svg { width: 32px; height: 32px; max-width: 32px; }
+  [data-layout='scroll'] .eg-op-icon-label { font-size: 9px; word-break: break-word; }
+  [data-layout='scroll'] .eg-op-ctas { flex-direction: column; margin-top: 16px; }
+  [data-layout='scroll'] .eg-op-btn { width: 100%; text-align: center; }
   .th-conveyor { width: min(280px, 85vw); }
   .th-conv-arrow { width: 36px; height: 36px; }
 }
 
 @media (max-width: 360px) {
-  [data-layout='scroll'] .eg-op-icons { grid-template-columns: repeat(4, 1fr); gap: 6px; overflow: hidden; }
-  [data-layout='scroll'] .eg-op-icon-glyph svg { width: 24px; height: 24px; max-width: 24px; }
-  [data-layout='scroll'] .eg-op-icon-label { font-size: 7px; word-break: break-word; }
+  [data-layout='scroll'] .eg-op-icons { grid-template-columns: repeat(2, 1fr); gap: 8px; overflow: hidden; }
+  [data-layout='scroll'] .eg-op-icon-glyph svg { width: 28px; height: 28px; max-width: 28px; }
+  [data-layout='scroll'] .eg-op-icon-label { font-size: 8px; word-break: break-word; }
 }
 
 @media (prefers-reduced-motion: reduce) {
