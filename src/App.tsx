@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react
 import Clarity from '@microsoft/clarity';
 import type { Mode, LayoutMode, Stop, ChippyRef } from './types';
 import { STOP_NAMES, MAX_STOP } from './data';
-import { isBot } from './utils/bot';
+import { isBot, isInAppBrowser } from './utils/bot';
 import TopBar from './components/TopBar';
 import World from './components/World';
 import ChippyRig from './components/ChippyRig';
@@ -36,7 +36,7 @@ export default function App() {
   // Post-hydration upgrade to cinematic for desktop humans.
   useLayoutEffect(() => {
     if (typeof window === 'undefined') return;
-    if (isBot()) return;
+    if (isBot() || isInAppBrowser()) return;
 
     if (window.innerWidth < MOBILE_BREAKPOINT) {
       setLayoutMode('scroll');
@@ -50,11 +50,11 @@ export default function App() {
     setLayoutMode('cinematic');
   }, []);
 
-  // Below 768px: always scroll, ignore localStorage.
+  // Below 768px or in-app browser: always scroll, ignore localStorage.
   // At or above 768px: restore localStorage preference if set.
   useEffect(() => {
     const onResize = () => {
-      if (window.innerWidth < MOBILE_BREAKPOINT) {
+      if (isInAppBrowser() || window.innerWidth < MOBILE_BREAKPOINT) {
         setLayoutMode('scroll');
       } else {
         const stored = localStorage.getItem(LAYOUT_STORAGE_KEY) as LayoutMode | null;
