@@ -1,6 +1,31 @@
+import { useEffect, useRef } from 'react';
 import { DOMAINS } from '../../data';
 
 export default function PortfolioStop() {
+  const videosRef = useRef<(HTMLVideoElement | null)[]>([]);
+
+  useEffect(() => {
+    const videos = videosRef.current.filter(Boolean) as HTMLVideoElement[];
+    if (!videos.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const video = entry.target as HTMLVideoElement;
+          observer.unobserve(video);
+          video.preload = 'auto';
+          video.load();
+          video.play().catch(() => {});
+        }
+      },
+      { rootMargin: '200px' },
+    );
+
+    for (const v of videos) observer.observe(v);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section className="stop">
       <div className="portfolio-bg" />
@@ -13,9 +38,11 @@ export default function PortfolioStop() {
           {DOMAINS.map((d, i) => (
             <div key={i} className="pcard" style={{ background: d.bg }}>
               <video
+                ref={(el) => { videosRef.current[i] = el; }}
                 className="pcard-video"
                 src={d.video}
-                autoPlay muted loop playsInline
+                preload="none"
+                muted loop playsInline
                 onError={(e) => { (e.target as HTMLVideoElement).style.display = 'none'; }}
               />
               <div className="ptag-pill"><span className="pdot" />{d.tag}</div>
