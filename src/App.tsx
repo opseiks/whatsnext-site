@@ -88,16 +88,6 @@ export default function App() {
 
   useEffect(() => {
     Clarity.init('x7j7xnmf7o');
-
-    const script = document.createElement('script');
-    script.src = 'https://www.googletagmanager.com/gtag/js?id=G-BFRW2EBQNK';
-    script.async = true;
-    document.head.appendChild(script);
-
-    window.dataLayer = window.dataLayer || [];
-    function gtag(...args: any[]) { window.dataLayer.push(args); }
-    gtag('js', new Date());
-    gtag('config', 'G-BFRW2EBQNK');
   }, []);
 
   useEffect(() => {
